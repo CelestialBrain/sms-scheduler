@@ -12,6 +12,22 @@ This guide provides step-by-step instructions for integrating the SMS Scheduler 
 
 FlutterFlow will automatically add the package to your `pubspec.yaml`.
 
+> **Keeping the dependency fresh:** FlutterFlow caches package versions aggressively. After pushing updates to this repository,
+> bump the `sms_scheduler` version in `pubspec.yaml` (for example from `2.0.0` to `2.0.1`) and then remove and re-add the
+> dependency inside FlutterFlow. If you prefer to point to the Git repository directly, use the **Custom Pub Dependencies** tab
+> and enter:
+>
+> ```text
+> git:
+>   url: https://github.com/Celestiariah/sms-scheduler.git
+> ```
+>
+> Once the dependency is re-added, click **Refresh Packages** in FlutterFlow to ensure the latest commit is pulled.
+
+> **Avoiding intl conflicts:** The package now allows `intl` versions from `0.18.1` up to (but not including) `0.21.0`. If you
+> see a "version solving failed" error, make sure your FlutterFlow project uses an `intl` version within that range (the FlutterFlow
+> default `0.20.x` release is supported).
+
 ## 2. Creating Custom Actions
 
 FlutterFlow uses "Custom Actions" to execute Dart code. You will need to create custom actions for each operation you want to perform with the SMS Scheduler package.
