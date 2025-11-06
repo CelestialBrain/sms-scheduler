@@ -39,22 +39,21 @@ class SmsSchedulerWebSemaphore {
 
   /// Initialize the web SMS scheduler with Semaphore API
   ///
-  /// [customApiKey] can be provided to override the default key stored in
-  /// [SemaphoreConfig].
+  /// [apiKey] is required and should be provided by the user at runtime.
+  /// This ensures the API key is not hardcoded in the repository.
   /// [senderName] overrides the default sender that will appear on outgoing
   /// messages.
   /// [usePriorityQueue] toggles Semaphore's priority queue for all messages
   /// (individual high-priority messages will still use the priority queue
   /// automatically).
   Future<void> initialize({
-    String? customApiKey,
+    required String apiKey,
     String? senderName,
     bool? usePriorityQueue,
   }) async {
     _logger.info('Initializing SMS Scheduler for Web with Semaphore API');
 
     // Initialize Semaphore client with API key
-    final apiKey = customApiKey ?? SemaphoreConfig.apiKey;
     _semaphoreClient = SemaphoreApiClient(apiKey: apiKey);
     _senderName = senderName ?? SemaphoreConfig.defaultSenderName;
     _usePriorityQueue = usePriorityQueue ?? SemaphoreConfig.usePriorityQueue;

@@ -12,10 +12,20 @@ import 'package:sms_scheduler/sms_scheduler.dart';
 /// Initialize the SMS Scheduler with Semaphore API for web
 /// 
 /// Call this action when your app starts (e.g., in the initial page's "On Page Load" action)
-Future<String> initializeSmsSchedulerSemaphore() async {
+/// 
+/// Parameters:
+/// - apiKey: Your Semaphore API key (get it from https://semaphore.co/)
+/// - senderName: Optional custom sender name (defaults to "SEMAPHORE")
+Future<String> initializeSmsSchedulerSemaphore(
+  String apiKey, {
+  String? senderName,
+}) async {
   try {
     final scheduler = SmsSchedulerWebSemaphore();
-    await scheduler.initialize();
+    await scheduler.initialize(
+      apiKey: apiKey,
+      senderName: senderName,
+    );
     
     // Get account info to verify connection
     final account = await scheduler.getAccountInfo();
