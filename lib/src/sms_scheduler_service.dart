@@ -35,24 +35,14 @@ class SmsSchedulerService {
   /// Initialize the SMS scheduler service
   Future<void> initialize() async {
     if (kIsWeb) {
-      _logger.warning(
-        'SmsSchedulerService.initialize called on web platform. Use SmsSchedulerWeb instead.',
-      );
       throw UnsupportedError(
         'SmsSchedulerService is not supported on web. Use SmsSchedulerWeb '
         'with a custom SMS sender instead.',
       );
     }
 
-    _logger.info('Initializing SmsSchedulerService');
-
     // Request SMS permissions
     final permissionsGranted = await _telephony.requestPhoneAndSmsPermissions;
-
-    _logger.logPermissionRequest(
-      permission: 'phoneAndSms',
-      granted: permissionsGranted ?? false,
-    );
 
     if (!permissionsGranted!) {
       _logger.error('SMS permissions not granted. SmsSchedulerService cannot initialize.');
