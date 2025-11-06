@@ -15,21 +15,22 @@ Get your SMS scheduler up and running in FlutterFlow in **5 minutes**!
 1. Go to **Custom Code** → **Actions**
 2. Click **+ Add Action**
 3. Name: `initializeSmsScheduler`
-4. Return Type: `Future<String>`
-5. Paste this code:
+4. Parameters: `apiKey` (String)
+5. Return Type: `Future<String>`
+6. Paste this code:
 
 ```dart
 import 'package:sms_scheduler/sms_scheduler.dart';
 
-Future<String> initializeSmsScheduler() async {
+Future<String> initializeSmsScheduler(String apiKey) async {
   final scheduler = SmsSchedulerWebSemaphore();
-  await scheduler.initialize();
+  await scheduler.initialize(apiKey: apiKey);
   final account = await scheduler.getAccountInfo();
   return 'Balance: ${account.creditBalance} credits';
 }
 ```
 
-6. Click **Save**
+7. Click **Save**
 
 ## Step 3: Create Schedule SMS Action (1 minute)
 
@@ -77,13 +78,24 @@ Future<String> scheduleSms(
 1. Create a new page called **SMS Scheduler**
 2. Add these widgets:
    - **Column** (main container)
+   - **Text**: "Semaphore API Key"
+   - **TextField**: Name it `apiKeyField`, placeholder "Paste your Semaphore API key"
+   - **Button**: Text "Connect"
+   - **Divider**
    - **Text**: "Schedule SMS"
    - **TextField**: Name it `phoneField`, placeholder "09171234567"
    - **TextField**: Name it `messageField`, placeholder "Your message", multiline
    - **DateTimePicker**: Name it `dateTimePicker`
    - **Button**: Text "Schedule SMS"
 
-3. Set up the button action:
+3. Set up the **Connect** button action:
+   - Add Action → **Custom Action**
+   - Select `initializeSmsScheduler`
+   - Map `apiKey` to `apiKeyField`'s text value
+   - Add Action → **Show Snackbar**
+   - Message: Action output (e.g., "Initialized successfully…")
+
+4. Set up the **Schedule SMS** button action:
    - Add Action → **Custom Action**
    - Select `scheduleSms`
    - Map parameters:
@@ -92,11 +104,6 @@ Future<String> scheduleSms(
      - `scheduledDate`: `dateTimePicker` widget state
    - Add Action → **Show Snackbar**
    - Message: Action output (the return value)
-
-4. Add initialization on page load:
-   - Page Settings → **On Page Load**
-   - Add Action → **Custom Action**
-   - Select `initializeSmsScheduler`
 
 ## Step 5: Test! (1 minute)
 
