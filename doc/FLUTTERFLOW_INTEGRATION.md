@@ -24,10 +24,6 @@ FlutterFlow will automatically add the package to your `pubspec.yaml`.
 >
 > Once the dependency is re-added, click **Refresh Packages** in FlutterFlow to ensure the latest commit is pulled.
 
-> **Avoiding intl conflicts:** The package now allows `intl` versions from `0.18.1` up to (but not including) `0.21.0`. If you
-> see a "version solving failed" error, make sure your FlutterFlow project uses an `intl` version within that range (the FlutterFlow
-> default `0.20.x` release is supported).
-
 ## 2. Creating Custom Actions
 
 FlutterFlow uses "Custom Actions" to execute Dart code. You will need to create custom actions for each operation you want to perform with the SMS Scheduler package.
