@@ -6,6 +6,7 @@ import 'package:workmanager/workmanager.dart';
 import 'package:uuid/uuid.dart';
 
 import 'database/sms_database.dart';
+import 'database/customer_database.dart';
 import 'models/customer.dart';
 import 'models/scheduled_sms.dart';
 import 'models/sms_status.dart';
@@ -16,11 +17,15 @@ class SmsSchedulerService {
   static final SmsSchedulerService _instance = SmsSchedulerService._internal();
   final telephony.Telephony _telephony = telephony.Telephony.instance;
   final SmsDatabase _database = SmsDatabase();
+  final CustomerDatabase _customerDatabase = CustomerDatabase();
   final _uuid = const Uuid();
   final SmsLogger _logger = SmsLogger();
 
   /// Expose the underlying database for advanced use cases (e.g., FlutterFlow)
   SmsDatabase get database => _database;
+  
+  /// Expose the customer database for advanced use cases
+  CustomerDatabase get customerDatabase => _customerDatabase;
 
   /// Stream controller for SMS status updates
   final _statusController = StreamController<ScheduledSMS>.broadcast();
@@ -353,6 +358,122 @@ class SmsSchedulerService {
   }
 
   bool get _supportsBackgroundTasks => !kIsWeb;
+
+  // Customer Management Methods
+  
+  /// Create a new customer
+  Future<Customer> createCustomer({
+    required String name,
+    required String phoneNumber,
+    String? email,
+    String? notes,
+    List<String> tags = const [],
+    Map<String, String> metadata = const {},
+  }) async {
+    final customer = Customer(
+      id: _uuid.v4(),
+      name: name,
+      phoneNumber: phoneNumber,
+      email: email,
+      notes: notes,
+      tags: tags,
+      metadata: metadata,
+      createdAt: DateTime.now(),
+      active: true,
+    );
+
+    await _customerDatabase.insertCustomer(customer);
+    
+    _logger.info(
+      'Customer created',
+      data: {
+        'customerId': customer.id,
+        'name': customer.name,
+        'phoneNumber': customer.phoneNumber,
+      },
+    );
+
+    return customer;
+  }
+
+  /// Get a customer by ID
+  Future<Customer?> getCustomer(String id) async {
+    return await _customerDatabase.getCustomer(id);
+  }
+
+  /// Get a customer by phone number
+  Future<Customer?> getCustomerByPhone(String phoneNumber) async {
+    return await _customerDatabase.getCustomerByPhone(phoneNumber);
+  }
+
+  /// Get all customers
+  Future<List<Customer>> getAllCustomers() async {
+    return await _customerDatabase.getAllCustomers();
+  }
+
+  /// Get active customers
+  Future<List<Customer>> getActiveCustomers() async {
+    return await _customerDatabase.getActiveCustomers();
+  }
+
+  /// Update a customer
+  Future<Customer> updateCustomer({
+    required String id,
+    String? name,
+    String? phoneNumber,
+    String? email,
+    String? notes,
+    List<String>? tags,
+    Map<String, String>? metadata,
+    bool? active,
+  }) async {
+    final existingCustomer = await _customerDatabase.getCustomer(id);
+    
+    if (existingCustomer == null) {
+      throw ArgumentError('Customer not found');
+    }
+
+    final updatedCustomer = existingCustomer.copyWith(
+      name: name,
+      phoneNumber: phoneNumber,
+      email: email,
+      notes: notes,
+      tags: tags,
+      metadata: metadata,
+      active: active,
+      updatedAt: DateTime.now(),
+    );
+
+    await _customerDatabase.updateCustomer(updatedCustomer);
+    
+    _logger.info(
+      'Customer updated',
+      data: {'customerId': id},
+    );
+
+    return updatedCustomer;
+  }
+
+  /// Delete a customer
+  Future<void> deleteCustomer(String id) async {
+    await _customerDatabase.deleteCustomer(id);
+    
+    _logger.info(
+      'Customer deleted',
+      data: {'customerId': id},
+    );
+  }
+
+  /// Search customers by name or phone number
+  Future<List<Customer>> searchCustomers(String query) async {
+    return await _customerDatabase.searchCustomers(query);
+  }
+
+  /// Get scheduled SMS messages for a specific customer
+  Future<List<ScheduledSMS>> getScheduledSmsForCustomer(String customerId) async {
+    final allSms = await _database.getAllScheduledSms();
+    return allSms.where((sms) => sms.customerId == customerId).toList();
+  }
 
   /// Dispose resources
   void dispose() {

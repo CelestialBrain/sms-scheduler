@@ -31,6 +31,9 @@ dependencies:
   
   # Date/time utilities
   intl: '>=0.18.1 <0.21.0'
+  
+  # UUID generation
+  uuid: ^4.0.0
 
 dev_dependencies:
   flutter_test:
