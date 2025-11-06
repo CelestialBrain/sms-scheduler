@@ -30,7 +30,7 @@ dependencies:
   json_annotation: ^4.8.1
   
   # Date/time utilities
-  intl: ^0.18.1
+  intl: '>=0.18.1 <0.21.0'
 
 dev_dependencies:
   flutter_test:
