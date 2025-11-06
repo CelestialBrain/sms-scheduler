@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:telephony/telephony.dart' as telephony;
 import 'package:workmanager/workmanager.dart';
 import 'package:uuid/uuid.dart';
@@ -8,6 +9,7 @@ import 'database/sms_database.dart';
 import 'models/customer.dart';
 import 'models/scheduled_sms.dart';
 import 'models/sms_status.dart';
+import 'utils/sms_logger.dart';
 
 /// Main service for scheduling and sending SMS messages
 class SmsSchedulerService {
@@ -15,6 +17,7 @@ class SmsSchedulerService {
   final telephony.Telephony _telephony = telephony.Telephony.instance;
   final SmsDatabase _database = SmsDatabase();
   final _uuid = const Uuid();
+  final SmsLogger _logger = SmsLogger();
 
   /// Expose the underlying database for advanced use cases (e.g., FlutterFlow)
   SmsDatabase get database => _database;
@@ -42,24 +45,55 @@ class SmsSchedulerService {
     final permissionsGranted = await _telephony.requestPhoneAndSmsPermissions;
 
     if (!permissionsGranted!) {
+      _logger.error('SMS permissions not granted. SmsSchedulerService cannot initialize.');
       throw Exception('SMS permissions not granted');
     }
 
-    // Initialize WorkManager for background tasks
-    await Workmanager().initialize(
-      callbackDispatcher,
-      isInDebugMode: kDebugMode,
-    );
+    if (!_supportsBackgroundTasks) {
+      _logger.info(
+        'Background tasks are not supported on this platform. Skipping Workmanager setup.',
+      );
+      return;
+    }
 
-    // Register periodic task to check for pending SMS
-    await Workmanager().registerPeriodicTask(
-      'sms-scheduler-check',
-      'checkPendingSms',
-      frequency: const Duration(minutes: 15),
-      constraints: Constraints(
-        networkType: NetworkType.not_required,
-      ),
-    );
+    // Initialize WorkManager for background tasks
+    try {
+      await Workmanager().initialize(
+        callbackDispatcher,
+        isInDebugMode: kDebugMode,
+      );
+
+      await Workmanager().registerPeriodicTask(
+        'sms-scheduler-check',
+        'checkPendingSms',
+        frequency: const Duration(minutes: 15),
+        constraints: Constraints(
+          networkType: NetworkType.not_required,
+        ),
+      );
+
+      _logger.info('Workmanager initialized and periodic task registered.');
+    } on MissingPluginException catch (e, stackTrace) {
+      _logger.warning(
+        'Workmanager plugin is not available. Background SMS checks will be disabled.',
+        data: {
+          'plugin': 'be.tramckrijte.workmanager',
+        },
+        stackTrace: stackTrace,
+      );
+      _logger.debug(
+        'MissingPluginException details',
+        data: {
+          'message': e.message,
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error(
+        'Failed to initialize Workmanager. Background SMS checks will be disabled.',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   /// Schedule a new SMS message
@@ -108,6 +142,14 @@ class SmsSchedulerService {
 
     // Save to database
     await _database.insertScheduledSms(sms);
+
+    _logger.logSchedule(
+      smsId: sms.id,
+      customerId: resolvedCustomerId ?? 'unknown',
+      customerName: resolvedCustomerName ?? 'unknown',
+      recipient: resolvedRecipient,
+      scheduledDate: scheduledDate,
+    );
 
     // Schedule immediate check if the time is close
     if (scheduledDate.difference(DateTime.now()).inMinutes < 15) {
@@ -209,12 +251,18 @@ class SmsSchedulerService {
     try {
       // Update status to sending
       await _database.updateSmsStatus(sms.id, SmsStatus.sending);
-      
+
       final updatedSms = sms.copyWith(
         status: SmsStatus.sending,
         updatedAt: DateTime.now(),
       );
       _statusController.add(updatedSms);
+
+      _logger.logSendAttempt(
+        smsId: sms.id,
+        recipient: sms.recipient,
+        attemptNumber: sms.retryCount + 1,
+      );
 
       // Send SMS using telephony
       await _telephony.sendSms(
@@ -235,6 +283,12 @@ class SmsSchedulerService {
         updatedAt: DateTime.now(),
       );
       _statusController.add(sentSms);
+
+      _logger.logSendSuccess(
+        smsId: sms.id,
+        recipient: sms.recipient,
+        sentAt: DateTime.now(),
+      );
     } catch (e) {
       // Update status to failed
       await _database.updateSmsStatus(
@@ -249,17 +303,56 @@ class SmsSchedulerService {
         updatedAt: DateTime.now(),
       );
       _statusController.add(failedSms);
+
+      _logger.logSendFailure(
+        smsId: sms.id,
+        recipient: sms.recipient,
+        errorMessage: e.toString(),
+      );
     }
   }
 
   /// Schedule an immediate check for pending SMS
   Future<void> _scheduleImmediateCheck() async {
-    await Workmanager().registerOneOffTask(
-      'sms-immediate-check-${_uuid.v4()}',
-      'checkPendingSms',
-      initialDelay: const Duration(seconds: 30),
-    );
+    if (!_supportsBackgroundTasks) {
+      _logger.debug(
+        'Immediate background check skipped because background tasks are not supported.',
+      );
+      return;
+    }
+
+    try {
+      await Workmanager().registerOneOffTask(
+        'sms-immediate-check-${_uuid.v4()}',
+        'checkPendingSms',
+        initialDelay: const Duration(seconds: 30),
+      );
+
+      _logger.debug('Immediate background check scheduled via Workmanager.');
+    } on MissingPluginException catch (e, stackTrace) {
+      _logger.warning(
+        'Workmanager plugin unavailable. Immediate background check was not scheduled.',
+        data: {
+          'plugin': 'be.tramckrijte.workmanager',
+        },
+        stackTrace: stackTrace,
+      );
+      _logger.debug(
+        'MissingPluginException details',
+        data: {
+          'message': e.message,
+        },
+      );
+    } catch (e, stackTrace) {
+      _logger.error(
+        'Failed to register immediate background check.',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
+
+  bool get _supportsBackgroundTasks => !kIsWeb;
 
   /// Dispose resources
   void dispose() {
@@ -270,13 +363,21 @@ class SmsSchedulerService {
 /// Background task callback dispatcher
 @pragma('vm:entry-point')
 void callbackDispatcher() {
+  final logger = SmsLogger();
   Workmanager().executeTask((task, inputData) async {
     try {
       final service = SmsSchedulerService();
       await service.checkAndSendPendingSms();
+      logger.logBackgroundTask(taskName: task, success: true, data: inputData);
       return true;
     } catch (e) {
-      debugPrint('Error in background task: $e');
+      logger.logBackgroundTask(
+        taskName: task,
+        success: false,
+        data: {
+          'error': e.toString(),
+        },
+      );
       return false;
     }
   });
