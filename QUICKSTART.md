@@ -8,7 +8,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sms_scheduler: ^1.0.0
+  sms_scheduler: ^2.0.0
 ```
 
 Run:
