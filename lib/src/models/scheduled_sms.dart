@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'sms_status.dart';
 
 part 'scheduled_sms.g.dart';
@@ -10,10 +11,10 @@ class ScheduledSMS {
   final String id;
 
   /// Customer ID (reference to Customer table)
-  final String customerId;
+  final String? customerId;
 
   /// Customer name (denormalized for quick access)
-  final String customerName;
+  final String? customerName;
 
   /// Recipient phone number (with country code)
   final String recipient;
@@ -53,8 +54,8 @@ class ScheduledSMS {
 
   ScheduledSMS({
     required this.id,
-    required this.customerId,
-    required this.customerName,
+    this.customerId,
+    this.customerName,
     required this.recipient,
     required this.message,
     required this.scheduledDate,
@@ -115,10 +116,8 @@ class ScheduledSMS {
 
   /// Convert to database map
   Map<String, dynamic> toMap() {
-    return {
+    final map = <String, dynamic>{
       'id': id,
-      'customerId': customerId,
-      'customerName': customerName,
       'recipient': recipient,
       'message': message,
       'scheduledDate': scheduledDate.toIso8601String(),
@@ -132,20 +131,34 @@ class ScheduledSMS {
       'tags': tags.join(','),
       'priority': priority,
     };
+
+    if (customerId != null) {
+      map['customerId'] = customerId;
+    }
+
+    if (customerName != null) {
+      map['customerName'] = customerName;
+    }
+
+    return map;
   }
 
   /// Create from database map
   factory ScheduledSMS.fromMap(Map<String, dynamic> map) {
+    final statusValue = map['status']?.toString() ?? 'pending';
+
     return ScheduledSMS(
       id: map['id'] as String,
-      customerId: map['customerId'] as String,
-      customerName: map['customerName'] as String,
+      customerId: map['customerId'] as String?,
+      customerName: map['customerName'] as String?,
       recipient: map['recipient'] as String,
       message: map['message'] as String,
       scheduledDate: DateTime.parse(map['scheduledDate'] as String),
-      active: (map['active'] as int) == 1,
+      active: map['active'] is int
+          ? (map['active'] as int) == 1
+          : (map['active'] as bool? ?? true),
       status: SmsStatus.values.firstWhere(
-        (e) => e.toString().split('.').last == map['status'],
+        (e) => e.toString().split('.').last == statusValue,
         orElse: () => SmsStatus.pending,
       ),
       createdAt: DateTime.parse(map['createdAt'] as String),
@@ -156,11 +169,15 @@ class ScheduledSMS {
           ? DateTime.parse(map['sentAt'] as String)
           : null,
       errorMessage: map['errorMessage'] as String?,
-      retryCount: map['retryCount'] as int? ?? 0,
+      retryCount: map['retryCount'] is int
+          ? map['retryCount'] as int
+          : int.tryParse(map['retryCount']?.toString() ?? '') ?? 0,
       tags: map['tags'] != null && (map['tags'] as String).isNotEmpty
           ? (map['tags'] as String).split(',')
-          : [],
-      priority: map['priority'] as int? ?? 3,
+          : <String>[],
+      priority: map['priority'] is int
+          ? map['priority'] as int
+          : int.tryParse(map['priority']?.toString() ?? '') ?? 3,
     );
   }
 

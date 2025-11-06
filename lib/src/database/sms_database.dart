@@ -26,7 +26,7 @@ class SmsDatabase {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -37,6 +37,8 @@ class SmsDatabase {
     await db.execute('''
       CREATE TABLE scheduled_sms (
         id TEXT PRIMARY KEY,
+        customerId TEXT,
+        customerName TEXT,
         recipient TEXT NOT NULL,
         message TEXT NOT NULL,
         scheduledDate TEXT NOT NULL,
@@ -45,7 +47,10 @@ class SmsDatabase {
         createdAt TEXT NOT NULL,
         updatedAt TEXT,
         sentAt TEXT,
-        errorMessage TEXT
+        errorMessage TEXT,
+        retryCount INTEGER NOT NULL DEFAULT 0,
+        tags TEXT,
+        priority INTEGER NOT NULL DEFAULT 3
       )
     ''');
 
@@ -61,7 +66,23 @@ class SmsDatabase {
 
   /// Handle database upgrades
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Handle future schema changes here
+    if (oldVersion < 2) {
+      await db.execute(
+        "ALTER TABLE scheduled_sms ADD COLUMN customerId TEXT",
+      );
+      await db.execute(
+        "ALTER TABLE scheduled_sms ADD COLUMN customerName TEXT",
+      );
+      await db.execute(
+        "ALTER TABLE scheduled_sms ADD COLUMN retryCount INTEGER NOT NULL DEFAULT 0",
+      );
+      await db.execute(
+        "ALTER TABLE scheduled_sms ADD COLUMN tags TEXT",
+      );
+      await db.execute(
+        "ALTER TABLE scheduled_sms ADD COLUMN priority INTEGER NOT NULL DEFAULT 3",
+      );
+    }
   }
 
   /// Insert a new scheduled SMS

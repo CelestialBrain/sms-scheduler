@@ -1,18 +1,23 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:telephony/telephony.dart';
+import 'package:telephony/telephony.dart' as telephony;
 import 'package:workmanager/workmanager.dart';
 import 'package:uuid/uuid.dart';
+
+import 'database/sms_database.dart';
+import 'models/customer.dart';
 import 'models/scheduled_sms.dart';
 import 'models/sms_status.dart';
-import 'database/sms_database.dart';
 
 /// Main service for scheduling and sending SMS messages
 class SmsSchedulerService {
   static final SmsSchedulerService _instance = SmsSchedulerService._internal();
-  final Telephony _telephony = Telephony.instance;
+  final telephony.Telephony _telephony = telephony.Telephony.instance;
   final SmsDatabase _database = SmsDatabase();
   final _uuid = const Uuid();
+
+  /// Expose the underlying database for advanced use cases (e.g., FlutterFlow)
+  SmsDatabase get database => _database;
 
   /// Stream controller for SMS status updates
   final _statusController = StreamController<ScheduledSMS>.broadcast();
@@ -52,13 +57,22 @@ class SmsSchedulerService {
 
   /// Schedule a new SMS message
   Future<ScheduledSMS> scheduleSms({
-    required String recipient,
+    Customer? customer,
+    String? customerId,
+    String? customerName,
+    String? recipient,
     required String message,
     required DateTime scheduledDate,
     bool active = true,
+    List<String> tags = const [],
+    int priority = 3,
   }) async {
+    final resolvedRecipient = customer?.phoneNumber ?? recipient;
+    final resolvedCustomerId = customer?.id ?? customerId;
+    final resolvedCustomerName = customer?.name ?? customerName;
+
     // Validate inputs
-    if (recipient.isEmpty) {
+    if (resolvedRecipient == null || resolvedRecipient.isEmpty) {
       throw ArgumentError('Recipient cannot be empty');
     }
 
@@ -73,12 +87,16 @@ class SmsSchedulerService {
     // Create scheduled SMS
     final sms = ScheduledSMS(
       id: _uuid.v4(),
-      recipient: recipient,
+      customerId: resolvedCustomerId,
+      customerName: resolvedCustomerName,
+      recipient: resolvedRecipient,
       message: message,
       scheduledDate: scheduledDate,
       active: active,
       status: SmsStatus.pending,
       createdAt: DateTime.now(),
+      tags: tags,
+      priority: priority,
     );
 
     // Save to database
