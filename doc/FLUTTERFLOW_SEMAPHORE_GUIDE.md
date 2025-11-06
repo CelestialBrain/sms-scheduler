@@ -4,7 +4,7 @@ This guide provides complete step-by-step instructions for integrating the SMS S
 
 ## Overview
 
-The SMS Scheduler package now includes native support for **Semaphore SMS API**, a Philippine-based SMS service provider with affordable rates and reliable delivery. The API key is securely stored in the package code, so you don't need to manage it separately.
+The SMS Scheduler package now includes native support for **Semaphore SMS API**, a Philippine-based SMS service provider with affordable rates and reliable delivery. You can keep the Semaphore API key out of source control by passing it into the scheduler at runtime (for example, from a secure text field or app setting in FlutterFlow).
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ Before you begin, ensure you have:
 
 1. A FlutterFlow account and project
 2. Access to the `sms-scheduler` package from the GitHub repository
-3. The Semaphore API key is already configured in the package
+3. Your Semaphore API key (stored securely outside the repository)
 
 ## Step 1: Add the Package to FlutterFlow
 
@@ -43,20 +43,22 @@ FlutterFlow uses "Custom Actions" to execute Dart code. You'll need to create cu
 
 **Action Name**: `initializeSmsSchedulerSemaphore`
 
+**Parameters**: `apiKey` (String)
+
 **Return Type**: `Future<String>`
 
 **Code**:
 ```dart
 import 'package:sms_scheduler/sms_scheduler.dart';
 
-Future<String> initializeSmsSchedulerSemaphore() async {
+Future<String> initializeSmsSchedulerSemaphore(String apiKey) async {
   try {
     final scheduler = SmsSchedulerWebSemaphore();
-    await scheduler.initialize();
-    
+    await scheduler.initialize(apiKey: apiKey);
+
     // Get account info to verify connection
     final account = await scheduler.getAccountInfo();
-    
+
     return 'Initialized successfully! Balance: ${account.creditBalance} credits';
   } catch (e) {
     return 'Error: $e';
@@ -64,7 +66,7 @@ Future<String> initializeSmsSchedulerSemaphore() async {
 }
 ```
 
-**Usage**: Call this action when your app starts (e.g., in the initial page's "On Page Load" action).
+**Usage**: Call this action when your app starts (e.g., in the initial page's "On Page Load" action). When you attach the action in FlutterFlow, bind the `apiKey` parameter to the text field, app state, or secure storage value where the user pasted their Semaphore key.
 
 ### 2.2. Create Customer
 
@@ -331,7 +333,7 @@ bool isValidPhilippineNumber(String phoneNumber) {
 
 ### API Key Security
 
-The Semaphore API key (`1fd72138299086e8fc5656a9826ac7e9`) is stored in the package code at `lib/src/config/semaphore_config.dart`. Since your GitHub repository is **private**, the API key is secure and won't be exposed publicly.
+Collect the Semaphore API key at runtime (for example, from the `apiKeyField` text field shown in the quick start) and pass it into `initializeSmsSchedulerSemaphore`. Avoid hardcoding the key in your repository or FlutterFlow project settings. If you need to persist the key between sessions, store it in FlutterFlow's secure storage or an encrypted backend endpoint.
 
 ### Message Costs
 
@@ -360,7 +362,7 @@ Supported networks:
 
 ### Issue: "Failed to initialize Semaphore API"
 
-**Solution**: Check your internet connection and verify the API key is correct in `semaphore_config.dart`.
+**Solution**: Check your internet connection and verify the API key text field or app state contains a valid Semaphore key before calling `initializeSmsSchedulerSemaphore`.
 
 ### Issue: "Invalid phone number"
 
