@@ -301,31 +301,3 @@ Future<SmsSchedulerDiagnosticsResult> runSmsSchedulerDiagnostics({
     testMessage: testMessage,
   );
 }
-
-/// Convenience helper tailored for FlutterFlow custom actions.
-///
-/// This wrapper runs the diagnostics suite, prints a detailed report to the
-/// console, and returns a short human-readable summary that can be surfaced in
-/// the UI. When the diagnostics encounter errors, the summary directs you to
-/// the console output for the full details.
-Future<String> runSmsSchedulerDiagnosticsAction({
-  bool? forceWebScheduler,
-  Duration scheduleOffset = const Duration(minutes: 2),
-  String testRecipient = '+15555550123',
-  String testMessage = 'SmsScheduler diagnostics message',
-}) async {
-  final result = await runSmsSchedulerDiagnostics(
-    forceWebScheduler: forceWebScheduler,
-    scheduleOffset: scheduleOffset,
-    testRecipient: testRecipient,
-    testMessage: testMessage,
-  );
-
-  debugPrint(result.toConsoleString());
-
-  if (result.success) {
-    return 'Diagnostics passed with ${result.logs.length} steps logged.';
-  }
-
-  return 'Diagnostics found ${result.errors.length} issue(s). Review console logs for details.';
-}
