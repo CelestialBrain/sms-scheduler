@@ -1,0 +1,50 @@
+name: sms_scheduler
+description: A Flutter package for scheduling SMS messages with support for eSIM integration and Philippine load APIs. Designed for flexibility with FlutterFlow and custom Flutter apps.
+version: 1.0.0
+homepage: https://github.com/yourusername/sms_scheduler
+repository: https://github.com/yourusername/sms_scheduler
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # SMS functionality
+  telephony: ^0.2.0
+  
+  # Local storage for scheduled messages
+  sqflite: ^2.3.0
+  path_provider: ^2.1.1
+  path: ^1.8.3
+  
+  # Background task execution
+  workmanager: ^0.5.2
+  
+  # HTTP requests for API integration
+  http: ^1.1.0
+  
+  # JSON serialization
+  json_annotation: ^4.8.1
+  
+  # Date/time utilities
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
+  mockito: ^5.4.4
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.example.sms_scheduler
+        pluginClass: SmsSchedulerPlugin
+      ios:
+        pluginClass: SmsSchedulerPlugin
