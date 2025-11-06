@@ -173,7 +173,7 @@ Future<void> scheduleSmsForCustomer(
 ) async {
   final service = SmsSchedulerService();
   await service.initialize();
-  
+
   final customer = await service.getCustomer(customerId);
   if (customer != null) {
     await service.scheduleSms(
@@ -184,6 +184,20 @@ Future<void> scheduleSmsForCustomer(
   }
 }
 ```
+
+**Example Custom Action for Diagnostics:**
+```dart
+import 'package:sms_scheduler/sms_scheduler.dart';
+
+Future<String> runDiagnosticsCustomAction() async {
+  return runSmsSchedulerDiagnosticsAction();
+}
+```
+
+`runSmsSchedulerDiagnosticsAction` prints a detailed diagnostics report to the
+console and returns a short summary message that you can surface in FlutterFlow
+UI elements. Call this from a button press to quickly verify scheduling
+behaviour on both mobile and web builds.
 
 ## Limitations
 
