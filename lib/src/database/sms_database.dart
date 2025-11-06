@@ -1,5 +1,6 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import '../models/scheduled_sms.dart';
 import '../models/sms_status.dart';
 
@@ -7,6 +8,7 @@ import '../models/sms_status.dart';
 class SmsDatabase {
   static final SmsDatabase _instance = SmsDatabase._internal();
   static Database? _database;
+  static final _InMemorySmsStore _webStore = _InMemorySmsStore();
 
   factory SmsDatabase() => _instance;
 
@@ -14,6 +16,13 @@ class SmsDatabase {
 
   /// Get the database instance
   Future<Database> get database async {
+    if (kIsWeb) {
+      throw UnsupportedError(
+        'The sqflite database is not available on web. Use SmsSchedulerWeb '
+        'for web-compatible scheduling.',
+      );
+    }
+
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
@@ -87,6 +96,11 @@ class SmsDatabase {
 
   /// Insert a new scheduled SMS
   Future<int> insertScheduledSms(ScheduledSMS sms) async {
+    if (kIsWeb) {
+      _webStore.insertOrReplace(sms);
+      return 1;
+    }
+
     final db = await database;
     return await db.insert(
       'scheduled_sms',
@@ -97,6 +111,10 @@ class SmsDatabase {
 
   /// Update an existing scheduled SMS
   Future<int> updateScheduledSms(ScheduledSMS sms) async {
+    if (kIsWeb) {
+      return _webStore.updateScheduledSms(sms);
+    }
+
     final db = await database;
     return await db.update(
       'scheduled_sms',
@@ -108,6 +126,10 @@ class SmsDatabase {
 
   /// Delete a scheduled SMS
   Future<int> deleteScheduledSms(String id) async {
+    if (kIsWeb) {
+      return _webStore.deleteScheduledSms(id);
+    }
+
     final db = await database;
     return await db.delete(
       'scheduled_sms',
@@ -118,6 +140,10 @@ class SmsDatabase {
 
   /// Get a scheduled SMS by ID
   Future<ScheduledSMS?> getScheduledSms(String id) async {
+    if (kIsWeb) {
+      return _webStore.getScheduledSms(id);
+    }
+
     final db = await database;
     final maps = await db.query(
       'scheduled_sms',
@@ -131,6 +157,10 @@ class SmsDatabase {
 
   /// Get all scheduled SMS messages
   Future<List<ScheduledSMS>> getAllScheduledSms() async {
+    if (kIsWeb) {
+      return _webStore.getAllScheduledSms();
+    }
+
     final db = await database;
     final maps = await db.query(
       'scheduled_sms',
@@ -142,6 +172,10 @@ class SmsDatabase {
 
   /// Get active scheduled SMS messages
   Future<List<ScheduledSMS>> getActiveScheduledSms() async {
+    if (kIsWeb) {
+      return _webStore.getActiveScheduledSms();
+    }
+
     final db = await database;
     final maps = await db.query(
       'scheduled_sms',
@@ -155,9 +189,13 @@ class SmsDatabase {
 
   /// Get pending SMS messages that are due to be sent
   Future<List<ScheduledSMS>> getPendingSms() async {
+    if (kIsWeb) {
+      return _webStore.getPendingSms();
+    }
+
     final db = await database;
     final now = DateTime.now().toIso8601String();
-    
+
     final maps = await db.query(
       'scheduled_sms',
       where: 'active = ? AND status = ? AND scheduledDate <= ?',
@@ -170,6 +208,10 @@ class SmsDatabase {
 
   /// Get SMS messages by status
   Future<List<ScheduledSMS>> getSmsByStatus(SmsStatus status) async {
+    if (kIsWeb) {
+      return _webStore.getSmsByStatus(status);
+    }
+
     final db = await database;
     final maps = await db.query(
       'scheduled_sms',
@@ -188,6 +230,15 @@ class SmsDatabase {
     String? errorMessage,
     DateTime? sentAt,
   }) async {
+    if (kIsWeb) {
+      return _webStore.updateSmsStatus(
+        id,
+        status,
+        errorMessage: errorMessage,
+        sentAt: sentAt,
+      );
+    }
+
     final db = await database;
     final updateData = <String, dynamic>{
       'status': status.toString().split('.').last,
@@ -212,6 +263,18 @@ class SmsDatabase {
 
   /// Toggle active status of a scheduled SMS
   Future<int> toggleActive(String id, bool active) async {
+    if (kIsWeb) {
+      final sms = await getScheduledSms(id);
+      if (sms == null) {
+        return 0;
+      }
+      final updated = sms.copyWith(
+        active: active,
+        updatedAt: DateTime.now(),
+      );
+      return updateScheduledSms(updated);
+    }
+
     final db = await database;
     return await db.update(
       'scheduled_sms',
@@ -226,13 +289,112 @@ class SmsDatabase {
 
   /// Delete all scheduled SMS messages
   Future<int> deleteAll() async {
+    if (kIsWeb) {
+      return _webStore.clear();
+    }
+
     final db = await database;
     return await db.delete('scheduled_sms');
   }
 
   /// Close the database
   Future<void> close() async {
+    if (kIsWeb) {
+      _webStore.clear();
+      return;
+    }
+
     final db = await database;
     await db.close();
+  }
+}
+
+class _InMemorySmsStore {
+  final Map<String, ScheduledSMS> _items = {};
+
+  void insertOrReplace(ScheduledSMS sms) {
+    _items[sms.id] = sms;
+  }
+
+  int updateScheduledSms(ScheduledSMS sms) {
+    if (!_items.containsKey(sms.id)) {
+      return 0;
+    }
+    _items[sms.id] = sms;
+    return 1;
+  }
+
+  int deleteScheduledSms(String id) {
+    return _items.remove(id) == null ? 0 : 1;
+  }
+
+  ScheduledSMS? getScheduledSms(String id) {
+    return _items[id];
+  }
+
+  List<ScheduledSMS> getAllScheduledSms() {
+    final sorted = _items.values.toList()
+      ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+    return List.unmodifiable(sorted);
+  }
+
+  List<ScheduledSMS> getActiveScheduledSms() {
+    final filtered = _items.values
+        .where((sms) => sms.active)
+        .toList()
+      ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+    return List.unmodifiable(filtered);
+  }
+
+  List<ScheduledSMS> getPendingSms() {
+    final now = DateTime.now();
+    final filtered = _items.values
+        .where(
+          (sms) => sms.active &&
+              sms.status == SmsStatus.pending &&
+              !sms.scheduledDate.isAfter(now),
+        )
+        .toList()
+      ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+    return List.unmodifiable(filtered);
+  }
+
+  List<ScheduledSMS> getSmsByStatus(SmsStatus status) {
+    final filtered = _items.values
+        .where((sms) => sms.status == status)
+        .toList()
+      ..sort((a, b) => b.scheduledDate.compareTo(a.scheduledDate));
+    return List.unmodifiable(filtered);
+  }
+
+  int updateSmsStatus(
+    String id,
+    SmsStatus status, {
+    String? errorMessage,
+    DateTime? sentAt,
+  }) {
+    final existing = _items[id];
+    if (existing == null) {
+      return 0;
+    }
+
+    final updated = existing.copyWith(
+      status: status,
+      updatedAt: DateTime.now(),
+      errorMessage: errorMessage,
+      sentAt: sentAt,
+      retryCount: status == SmsStatus.failed
+          ? existing.retryCount + 1
+          : existing.retryCount,
+    );
+
+    _items[id] = updated;
+    return 1;
+  }
+
+  int clear() {
+    final count = _items.length;
+    _items.clear();
+    return count;
   }
 }
