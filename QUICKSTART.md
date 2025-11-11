@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get started with the SMS Scheduler package in 5 minutes!
+Get started with the SchedulerSMS package in 5 minutes!
 
 ## Step 1: Installation
 
@@ -8,7 +8,7 @@ Add the package to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sms_scheduler: ^2.0.0
+  schedulersms: ^2.0.0
 ```
 
 Run:
@@ -29,9 +29,9 @@ Add to `android/app/src/main/AndroidManifest.xml`:
 ## Step 3: Initialize the Service
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-final smsService = SmsSchedulerService();
+final smsService = SchedulerSmsService();
 await smsService.initialize();
 ```
 
@@ -40,7 +40,7 @@ await smsService.initialize();
 ```dart
 await smsService.scheduleSms(
   recipient: '+639171234567',
-  message: 'Hello from SMS Scheduler!',
+  message: 'Hello from SchedulerSMS!',
   scheduledDate: DateTime.now().add(Duration(minutes: 5)),
 );
 ```

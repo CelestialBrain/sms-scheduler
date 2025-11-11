@@ -29,7 +29,7 @@ class CustomerDatabase {
   /// Initialize the database
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'sms_scheduler.db');
+    final path = join(databasePath, 'schedulersms.db');
 
     return await openDatabase(
       path,

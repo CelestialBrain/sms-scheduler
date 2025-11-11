@@ -1,8 +1,8 @@
-name: sms_scheduler
+name: schedulersms
 description: A Flutter package for scheduling SMS messages with support for eSIM integration and Philippine load APIs. Designed for flexibility with FlutterFlow and custom Flutter apps.
 version: 2.0.0
-homepage: https://github.com/Celestiariah/sms-scheduler
-repository: https://github.com/Celestiariah/sms-scheduler
+homepage: https://github.com/Celestiariah/schedulersms
+repository: https://github.com/Celestiariah/schedulersms
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

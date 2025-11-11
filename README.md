@@ -1,4 +1,4 @@
-# SMS Scheduler - Enhanced Edition
+# SchedulerSMS - Enhanced Edition
 
 A powerful and flexible Flutter package for scheduling SMS messages, now with per-customer scheduling, web support, Semaphore API integration, and extensive logging. Designed for seamless integration with FlutterFlow and custom Flutter applications.
 
@@ -28,9 +28,9 @@ Add this to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sms_scheduler:
+  schedulersms:
     git:
-      url: https://github.com/CelestialBrain/sms-scheduler
+      url: https://github.com/CelestialBrain/schedulersms
       ref: main
 ```
 
@@ -69,17 +69,17 @@ No special configuration is needed for the web. The package includes built-in su
 
 **For Mobile:**
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-final smsService = SmsSchedulerService();
+final smsService = SchedulerSmsService();
 await smsService.initialize();
 ```
 
 **For Web with Semaphore API:**
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-final scheduler = SmsSchedulerWebSemaphore();
+final scheduler = SchedulerSmsWebSemaphore();
 
 // Initialize with your Semaphore API key
 await scheduler.initialize(
@@ -90,9 +90,9 @@ await scheduler.initialize(
 
 **For Web with Custom SMS Sender:**
 ```dart
-import 'package:sms_scheduler/sms_scheduler_web.dart';
+import 'package:schedulersms/schedulersms_web.dart';
 
-final smsSchedulerWeb = SmsSchedulerWeb();
+final smsSchedulerWeb = SchedulerSmsWeb();
 
 // Define your custom web SMS sender
 Future<bool> myWebSmsSender(ScheduledSMS sms) async {
@@ -148,7 +148,7 @@ final customerMessages = await scheduler.getScheduledSmsForCustomer(customer.id)
 The package now includes a powerful logging system. You can access logs for debugging and error analysis.
 
 ```dart
-import 'package:sms_scheduler/src/utils/sms_logger.dart';
+import 'package:schedulersms/src/utils/sms_logger.dart';
 
 final logger = SmsLogger();
 
@@ -181,19 +181,19 @@ This package is fully compatible with FlutterFlow. See the [example/flutterflow_
 
 1.  **Add Package**: Go to Project Dependencies → Custom Pub Dependencies and add:
     ```
-    sms-scheduler:
+    schedulersms:
       git:
-        url: https://github.com/CelestialBrain/sms-scheduler
+        url: https://github.com/CelestialBrain/schedulersms
         ref: main
     ```
 
 2.  **Initialize on App Start**: Create a custom action with the following code:
     ```dart
-    import 'package:sms_scheduler/sms_scheduler.dart';
+    import 'package:schedulersms/schedulersms.dart';
     
-    Future<String> initializeSmsScheduler(String apiKey) async {
+    Future<String> initializeSchedulerSms(String apiKey) async {
       try {
-        final scheduler = SmsSchedulerWebSemaphore();
+        final scheduler = SchedulerSmsWebSemaphore();
         await scheduler.initialize(apiKey: apiKey);
         
         final account = await scheduler.getAccountInfo();
@@ -206,7 +206,7 @@ This package is fully compatible with FlutterFlow. See the [example/flutterflow_
 
 3.  **Schedule SMS**: Create a custom action to schedule messages:
     ```dart
-    import 'package:sms_scheduler/sms_scheduler.dart';
+    import 'package:schedulersms/schedulersms.dart';
     
     Future<String> scheduleSms(
       String phoneNumber,
@@ -214,7 +214,7 @@ This package is fully compatible with FlutterFlow. See the [example/flutterflow_
       DateTime scheduledDate,
     ) async {
       try {
-        final scheduler = SmsSchedulerWebSemaphore();
+        final scheduler = SchedulerSmsWebSemaphore();
         
         // Create or find customer
         Customer? customer = await scheduler.getCustomerByPhone(phoneNumber);

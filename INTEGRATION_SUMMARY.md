@@ -1,4 +1,4 @@
-# SMS Scheduler - Semaphore Integration Summary
+# SchedulerSMS - Semaphore Integration Summary
 
 **Date**: November 6, 2025  
 **Package Version**: 2.0.0+  
@@ -28,7 +28,7 @@
   - Default sender name: `SEMAPHORE`
   - Configurable priority queue setting
 
-- **Created `SmsSchedulerWebSemaphore`** service:
+- **Created `SchedulerSmsWebSemaphore`** service:
   - Web-compatible SMS scheduler
   - Native Semaphore API integration
   - Automatic periodic message checking (every 1 minute)
@@ -86,7 +86,7 @@
 ## Package Structure
 
 ```
-sms-scheduler/
+schedulersms/
 ├── lib/
 │   ├── src/
 │   │   ├── api/
@@ -105,10 +105,10 @@ sms-scheduler/
 │   │   ├── utils/
 │   │   │   ├── sms_logger.dart
 │   │   │   └── sms_validator.dart
-│   │   ├── sms_scheduler_service.dart         ✅ Updated
-│   │   ├── sms_scheduler_web.dart
-│   │   └── sms_scheduler_web_semaphore.dart   ✨ NEW (Main service)
-│   └── sms_scheduler.dart                     ✅ Updated exports
+│   │   ├── schedulersms_service.dart         ✅ Updated
+│   │   ├── schedulersms_web.dart
+│   │   └── schedulersms_web_semaphore.dart   ✨ NEW (Main service)
+│   └── schedulersms.dart                     ✅ Updated exports
 ├── doc/
 │   ├── FLUTTERFLOW_SEMAPHORE_GUIDE.md         ✨ NEW
 │   ├── FLUTTERFLOW_INTEGRATION.md
@@ -127,15 +127,15 @@ sms-scheduler/
 
 1. **Add package** to FlutterFlow:
    ```
-   Git URL: https://github.com/CelestialBrain/sms-scheduler.git
+   Git URL: https://github.com/CelestialBrain/schedulersms.git
    ```
 
 2. **Create initialize action**:
    ```dart
-   import 'package:sms_scheduler/sms_scheduler.dart';
+   import 'package:schedulersms/schedulersms.dart';
    
-   Future<String> initializeSmsScheduler() async {
-     final scheduler = SmsSchedulerWebSemaphore();
+   Future<String> initializeSchedulerSms() async {
+     final scheduler = SchedulerSmsWebSemaphore();
      await scheduler.initialize();
      final account = await scheduler.getAccountInfo();
      return 'Balance: ${account.creditBalance} credits';
@@ -144,14 +144,14 @@ sms-scheduler/
 
 3. **Create schedule SMS action**:
    ```dart
-   import 'package:sms_scheduler/sms_scheduler.dart';
+   import 'package:schedulersms/schedulersms.dart';
    
    Future<String> scheduleSms(
      String phoneNumber,
      String message,
      DateTime scheduledDate,
    ) async {
-     final scheduler = SmsSchedulerWebSemaphore();
+     final scheduler = SchedulerSmsWebSemaphore();
      
      Customer? customer = await scheduler.getCustomerByPhone(phoneNumber);
      if (customer == null) {

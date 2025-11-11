@@ -1,4 +1,4 @@
-# FlutterFlow Integration Guide for SMS Scheduler Dependency
+# FlutterFlow Integration Guide for SchedulerSMS Dependency
 
 ## Test Results Summary
 
@@ -76,8 +76,8 @@ python3 test_complete.py
 
 **Setup**:
 ```bash
-flutter create test_sms_scheduler
-cd test_sms_scheduler
+flutter create test_schedulersms
+cd test_schedulersms
 # Add dependency to pubspec.yaml
 flutter pub get
 flutter run -d chrome
@@ -155,14 +155,14 @@ Hi John Doe, thank you for visiting VBE Eye Center! We hope your appointment on 
 
 ## FlutterFlow Custom Actions Required
 
-### 1. **Initialize SMS Scheduler** (On App Start)
+### 1. **Initialize SchedulerSMS** (On App Start)
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<String> initializeSmsScheduler(String apiKey) async {
+Future<String> initializeSchedulerSms(String apiKey) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.initialize(apiKey: apiKey);
     
     final account = await scheduler.getAccountInfo();
@@ -176,7 +176,7 @@ Future<String> initializeSmsScheduler(String apiKey) async {
 ### 2. **Schedule Appointment Reminder**
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleAppointmentReminder(
   String patientName,
@@ -186,7 +186,7 @@ Future<String> scheduleAppointmentReminder(
   String clinicName,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     // Find or create customer
     Customer? customer = await scheduler.getCustomerByPhone(patientPhone);
@@ -223,11 +223,11 @@ Future<String> scheduleAppointmentReminder(
 ### 3. **Get Account Balance**
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<double> getAccountBalance() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final account = await scheduler.getAccountInfo();
     return account.creditBalance;
   } catch (e) {
@@ -239,11 +239,11 @@ Future<double> getAccountBalance() async {
 ### 4. **Get All Scheduled Messages**
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<List<dynamic>> getAllScheduledMessages() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final messages = await scheduler.getAllScheduledSms();
     return messages.map((msg) => msg.toMap()).toList();
   } catch (e) {
@@ -259,18 +259,18 @@ Future<List<dynamic>> getAllScheduledMessages() async {
 ### Step 1: Add Package Dependency
 1. Go to **Settings & Integrations** → **Project Dependencies**
 2. Click **Add Dependency** → **Git** tab
-3. Enter Git URL: `https://github.com/CelestialBrain/sms-scheduler.git`
+3. Enter Git URL: `https://github.com/CelestialBrain/schedulersms.git`
 4. Click **Add**
 
 ### Step 2: Create Custom Actions
 1. Create each custom action listed above
 2. Set correct parameter types and return types
-3. Import the package: `import 'package:sms_scheduler/sms_scheduler.dart';`
+3. Import the package: `import 'package:schedulersms/schedulersms.dart';`
 
 ### Step 3: Create Test UI
 1. **Home Page**:
    - TextField: API Key input
-   - Button: "Initialize" (calls `initializeSmsScheduler`)
+   - Button: "Initialize" (calls `initializeSchedulerSms`)
    - Text: Display balance
 
 2. **Schedule Reminder Page**:
@@ -370,7 +370,7 @@ Future<List<dynamic>> getAllScheduledMessages() async {
 
 ## Support & Resources
 
-- **Package Repository**: https://github.com/CelestialBrain/sms-scheduler
+- **Package Repository**: https://github.com/CelestialBrain/schedulersms
 - **Semaphore API Docs**: https://www.semaphore.co/docs
 - **FlutterFlow Docs**: https://docs.flutterflow.io
 - **Test Results**: All tests passed ✅

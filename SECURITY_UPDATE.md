@@ -45,8 +45,8 @@ Create an App State variable called `semaphoreApiKey` (String type).
 
 ### Step 2: Initialize with API Key
 ```dart
-Future<String> initializeSmsScheduler(String apiKey) async {
-  final scheduler = SmsSchedulerWebSemaphore();
+Future<String> initializeSchedulerSms(String apiKey) async {
+  final scheduler = SchedulerSmsWebSemaphore();
   await scheduler.initialize(apiKey: apiKey);
   return 'Initialized successfully';
 }
@@ -66,8 +66,8 @@ When your app starts, call the initialization function with the API key from App
 ## Breaking Changes
 
 - `SemaphoreConfig.apiKey` has been removed
-- `SmsSchedulerWebSemaphore.initialize()` now requires `apiKey` parameter
-- `initializeSmsSchedulerSemaphore()` in FlutterFlow custom actions now requires `apiKey` parameter
+- `SchedulerSmsWebSemaphore.initialize()` now requires `apiKey` parameter
+- `initializeSchedulerSmsSemaphore()` in FlutterFlow custom actions now requires `apiKey` parameter
 
 ## Benefits
 

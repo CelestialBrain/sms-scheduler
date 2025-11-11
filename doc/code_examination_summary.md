@@ -1,15 +1,15 @@
-# SMS Scheduler Code Examination Summary
+# SchedulerSMS Code Examination Summary
 
 ## Project Overview
 
-The **sms-scheduler** project is a Flutter package designed to schedule SMS messages for dental appointments (or any other appointment-based system). It integrates with **Semaphore SMS API**, a Philippine-based SMS service provider, and is specifically designed to work with **FlutterFlow** projects.
+The **schedulersms** project is a Flutter package designed to schedule SMS messages for dental appointments (or any other appointment-based system). It integrates with **Semaphore SMS API**, a Philippine-based SMS service provider, and is specifically designed to work with **FlutterFlow** projects.
 
 ## Key Components
 
 ### 1. **Dart/Flutter Package** (`/lib` directory)
 The main Flutter package contains:
 
-- **`SmsSchedulerWebSemaphore`** - Main scheduler class for web applications
+- **`SchedulerSmsWebSemaphore`** - Main scheduler class for web applications
 - **`SemaphoreApiClient`** - API client for Semaphore SMS service
 - **Customer Management** - Database and models for managing customer information
 - **SMS Database** - Local storage for scheduled messages
@@ -34,7 +34,7 @@ A Node.js/Express backend for handling:
 
 #### Key Classes:
 
-**`SmsSchedulerWebSemaphore`** (Main Scheduler)
+**`SchedulerSmsWebSemaphore`** (Main Scheduler)
 - `initialize(apiKey, senderName, usePriorityQueue)` - Initialize with API credentials
 - `scheduleSms(customer, message, scheduledDate)` - Schedule a new SMS
 - `checkAndSendPendingSms()` - Check and send due messages
@@ -64,7 +64,7 @@ A Node.js/Express backend for handling:
 
 The package is designed to be used as a **Custom Action** in FlutterFlow projects. Key custom actions needed:
 
-1. **`initializeSmsSchedulerSemaphore(apiKey)`** - Initialize on app start
+1. **`initializeSchedulerSmsSemaphore(apiKey)`** - Initialize on app start
 2. **`createCustomer(name, phoneNumber, email)`** - Create customer records
 3. **`scheduleSmsForCustomer(customerId, message, scheduledDate)`** - Schedule with customer ID
 4. **`scheduleSmsDirectly(phoneNumber, message, scheduledDate)`** - Schedule without pre-existing customer
@@ -113,7 +113,7 @@ For the backend API (if testing eSIM/load features):
 - `LOAD_API_PASSWORD` - Load provider password
 - `LOAD_COMPANY_PREFIX` - Company prefix for transactions
 
-### For SMS Scheduler Testing
+### For SchedulerSMS Testing
 - **Semaphore API Key** - Required for all SMS operations
 - **Test Phone Number** - Philippine mobile number (09XXXXXXXXX format)
 - **Sender Name** - Optional, defaults to "SEMAPHORE"
@@ -156,7 +156,7 @@ Use Postman or curl to test Semaphore API directly:
 
 ## Key Files to Review
 
-1. **`/lib/src/sms_scheduler_web_semaphore.dart`** - Main scheduler implementation
+1. **`/lib/src/schedulersms_web_semaphore.dart`** - Main scheduler implementation
 2. **`/lib/src/api/semaphore_api_client.dart`** - Semaphore API client
 3. **`/doc/FLUTTERFLOW_SEMAPHORE_GUIDE.md`** - Integration guide
 4. **`/example/flutterflow_custom_actions.dart`** - Example custom actions

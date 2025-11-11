@@ -1,62 +1,62 @@
 # FlutterFlow Integration Guide
 
-This guide provides step-by-step instructions for integrating the SMS Scheduler package into your FlutterFlow application, with a focus on per-customer scheduling and web support.
+This guide provides step-by-step instructions for integrating the SchedulerSMS package into your FlutterFlow application, with a focus on per-customer scheduling and web support.
 
 ## 1. Adding the Package to FlutterFlow
 
 1.  **Open your FlutterFlow project**.
 2.  Navigate to **Settings & Integrations** → **Project Dependencies**.
 3.  Click **Add Dependency**.
-4.  Enter `sms_scheduler` and select version `^2.0.0`.
+4.  Enter `schedulersms` and select version `^2.0.0`.
 5.  Click **Add**.
 
 FlutterFlow will automatically add the package to your `pubspec.yaml`.
 
 > **Keeping the dependency fresh:** FlutterFlow caches package versions aggressively. After pushing updates to this repository,
-> bump the `sms_scheduler` version in `pubspec.yaml` (for example from `2.0.0` to `2.0.1`) and then remove and re-add the
+> bump the `schedulersms` version in `pubspec.yaml` (for example from `2.0.0` to `2.0.1`) and then remove and re-add the
 > dependency inside FlutterFlow. If you prefer to point to the Git repository directly, use the **Custom Pub Dependencies** tab
 > and enter:
 >
 > ```text
 > git:
->   url: https://github.com/Celestiariah/sms-scheduler.git
+>   url: https://github.com/Celestiariah/schedulersms.git
 > ```
 >
 > Once the dependency is re-added, click **Refresh Packages** in FlutterFlow to ensure the latest commit is pulled.
 
 ## 2. Creating Custom Actions
 
-FlutterFlow uses "Custom Actions" to execute Dart code. You will need to create custom actions for each operation you want to perform with the SMS Scheduler package.
+FlutterFlow uses "Custom Actions" to execute Dart code. You will need to create custom actions for each operation you want to perform with the SchedulerSMS package.
 
-### Custom Action: Initialize SMS Scheduler (Mobile)
+### Custom Action: Initialize SchedulerSMS (Mobile)
 
-**Action Name**: `initializeSmsScheduler`
+**Action Name**: `initializeSchedulerSms`
 
 **Return Type**: `Future<void>`
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<void> initializeSmsScheduler() async {
-  final service = SmsSchedulerService();
+Future<void> initializeSchedulerSms() async {
+  final service = SchedulerSmsService();
   await service.initialize();
 }
 ```
 
-### Custom Action: Initialize SMS Scheduler (Web)
+### Custom Action: Initialize SchedulerSMS (Web)
 
-**Action Name**: `initializeSmsSchedulerWeb`
+**Action Name**: `initializeSchedulerSmsWeb`
 
 **Return Type**: `Future<void>`
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler_web.dart';
+import 'package:schedulersms/schedulersms_web.dart';
 import 'package:http/http.dart' as http;
 
-Future<void> initializeSmsSchedulerWeb() async {
-  final smsSchedulerWeb = SmsSchedulerWeb();
+Future<void> initializeSchedulerSmsWeb() async {
+  final smsSchedulerWeb = SchedulerSmsWeb();
 
   // Define your custom web SMS sender
   Future<bool> myWebSmsSender(ScheduledSMS sms) async {
@@ -93,7 +93,7 @@ Future<void> initializeSmsSchedulerWeb() async {
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 import 'package:uuid/uuid.dart';
 
 Future<String> createCustomer(
@@ -101,7 +101,7 @@ Future<String> createCustomer(
   String phoneNumber,
   String? email,
 ) async {
-  final service = SmsSchedulerService();
+  final service = SchedulerSmsService();
   
   final customer = Customer(
     id: Uuid().v4(),
@@ -129,14 +129,14 @@ Future<String> createCustomer(
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleSmsForCustomer(
   String customerId,
   String message,
   DateTime scheduledDate,
 ) async {
-  final service = SmsSchedulerService();
+  final service = SchedulerSmsService();
   
   // Get customer from database
   final customer = await service.database.getCustomer(customerId);
@@ -163,10 +163,10 @@ Future<String> scheduleSmsForCustomer(
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<List<dynamic>> getAllCustomers() async {
-  final service = SmsSchedulerService();
+  final service = SchedulerSmsService();
   final customers = await service.database.getAllCustomers();
   
   return customers.map((customer) => customer.toMap()).toList();
@@ -184,10 +184,10 @@ Future<List<dynamic>> getAllCustomers() async {
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<List<dynamic>> getScheduledMessagesForCustomer(String customerId) async {
-  final service = SmsSchedulerService();
+  final service = SchedulerSmsService();
   final messages = await service.getScheduledSmsForCustomer(customerId);
   
   return messages.map((sms) => sms.toMap()).toList();
@@ -227,7 +227,7 @@ Future<List<dynamic>> getScheduledMessagesForCustomer(String customerId) async {
 
 When building for the web, you **must** ensure that:
 
-1.  You call `initializeSmsSchedulerWeb()` instead of `initializeSmsScheduler()` on app startup.
+1.  You call `initializeSchedulerSmsWeb()` instead of `initializeSchedulerSms()` on app startup.
 2.  You have a backend API that can send SMS messages (e.g., using Twilio, Nexmo, etc.).
 3.  Your `myWebSmsSender` function in the initialization code correctly calls your backend API.
 
@@ -237,4 +237,4 @@ When building for the web, you **must** ensure that:
 -   **iOS**: Test on a real iOS device. Note that SMS will open the native composer.
 -   **Web**: Test in a browser. Ensure your backend API is running and accessible.
 
-By following this guide, you can fully integrate the SMS Scheduler package into your FlutterFlow application, enabling powerful per-customer SMS scheduling capabilities.
+By following this guide, you can fully integrate the SchedulerSMS package into your FlutterFlow application, enabling powerful per-customer SMS scheduling capabilities.

@@ -1,6 +1,6 @@
-# SMS Scheduler Backend API
+# SchedulerSMS Backend API
 
-A secure backend API for handling eSIM and load purchases for the Flutter SMS Scheduler package.
+A secure backend API for handling eSIM and load purchases for the Flutter SchedulerSMS package.
 
 ## Features
 

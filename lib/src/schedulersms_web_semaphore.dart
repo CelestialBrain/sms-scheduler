@@ -14,8 +14,8 @@ import 'config/semaphore_config.dart';
 /// 
 /// This implementation uses the Semaphore SMS API to send messages from web applications.
 /// The API key is configured in SemaphoreConfig for security.
-class SmsSchedulerWebSemaphore {
-  static final SmsSchedulerWebSemaphore _instance = SmsSchedulerWebSemaphore._internal();
+class SchedulerSmsWebSemaphore {
+  static final SchedulerSmsWebSemaphore _instance = SchedulerSmsWebSemaphore._internal();
   final SmsDatabase _database = SmsDatabase();
   final CustomerDatabase _customerDatabase = CustomerDatabase();
   final SmsLogger _logger = SmsLogger();
@@ -30,9 +30,9 @@ class SmsSchedulerWebSemaphore {
   /// Timer for periodic checks
   Timer? _periodicTimer;
 
-  factory SmsSchedulerWebSemaphore() => _instance;
+  factory SchedulerSmsWebSemaphore() => _instance;
 
-  SmsSchedulerWebSemaphore._internal();
+  SchedulerSmsWebSemaphore._internal();
 
   /// Stream of SMS status updates
   Stream<ScheduledSMS> get statusStream => _statusController.stream;
@@ -51,7 +51,7 @@ class SmsSchedulerWebSemaphore {
     String? senderName,
     bool? usePriorityQueue,
   }) async {
-    _logger.info('Initializing SMS Scheduler for Web with Semaphore API');
+    _logger.info('Initializing SchedulerSMS for Web with Semaphore API');
 
     // Initialize Semaphore client with API key
     _semaphoreClient = SemaphoreApiClient(apiKey: apiKey);

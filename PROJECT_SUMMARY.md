@@ -1,4 +1,4 @@
-# Flutter SMS Scheduler Package - Enhanced Edition
+# Flutter SchedulerSMS Package - Enhanced Edition
 
 **Author**: beldan
 
@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This document provides a comprehensive overview of the enhanced Flutter SMS Scheduler package, which now includes per-customer scheduling, extensive logging, web support, and improved documentation. The package has been redesigned based on best practices from established Flutter packages like `url_launcher` and `flutter_sms`.
+This document provides a comprehensive overview of the enhanced Flutter SchedulerSMS package, which now includes per-customer scheduling, extensive logging, web support, and improved documentation. The package has been redesigned based on best practices from established Flutter packages like `url_launcher` and `flutter_sms`.
 
 ## What's New in Version 2.0
 
@@ -69,7 +69,7 @@ logger.addLogHandler((entry) {
 
 ### 3. Web Support
 
-The package now includes a web-compatible implementation (`SmsSchedulerWeb`):
+The package now includes a web-compatible implementation (`SchedulerSmsWeb`):
 
 - **Custom SMS Sender**: Allows integration with backend SMS APIs (Twilio, Nexmo, etc.)
 
@@ -82,7 +82,7 @@ The package now includes a web-compatible implementation (`SmsSchedulerWeb`):
 **Web Implementation Example**:
 
 ```
-final smsSchedulerWeb = SmsSchedulerWeb();
+final smsSchedulerWeb = SchedulerSmsWeb();
 
 Future<bool> myWebSmsSender(ScheduledSMS sms) async {
   final response = await http.post(
@@ -127,10 +127,10 @@ lib/
 │   ├── utils/                        # Utilities
 │   │   ├── sms_logger.dart (new)
 │   │   └── sms_validator.dart
-│   ├── sms_scheduler_service.dart    # Main mobile service
-│   └── sms_scheduler_web.dart (new)  # Web implementation
-├── sms_scheduler.dart                # Main export file
-└── sms_scheduler_web.dart (new)      # Web export file
+│   ├── schedulersms_service.dart    # Main mobile service
+│   └── schedulersms_web.dart (new)  # Web implementation
+├── schedulersms.dart                # Main export file
+└── schedulersms_web.dart (new)      # Web export file
 ```
 
 ## Best Practices Applied
@@ -176,7 +176,7 @@ for (final customerData in customerList) {
 }
 ```
 
-### Use Case 2: Web-Based SMS Scheduler
+### Use Case 2: Web-Based SchedulerSMS
 
 A web application needs to schedule SMS messages using a backend API.
 
@@ -228,7 +228,7 @@ for (final log in errorLogs) {
 
 The package is fully compatible with FlutterFlow through custom actions. Key custom actions include:
 
-- `initializeSmsScheduler()`: Initialize the service
+- `initializeSchedulerSms()`: Initialize the service
 
 - `createCustomer()`: Create a new customer
 
@@ -331,7 +331,7 @@ See the [Error Analysis Guide](doc/ERROR_ANALYSIS.md) for more details.
 
 ## Conclusion
 
-The enhanced SMS Scheduler package provides a powerful, flexible, and well-documented solution for scheduling SMS messages in Flutter applications. With per-customer scheduling, extensive logging, web support, and comprehensive documentation, it is ready for production use in both mobile and web applications, including seamless integration with FlutterFlow.
+The enhanced SchedulerSMS package provides a powerful, flexible, and well-documented solution for scheduling SMS messages in Flutter applications. With per-customer scheduling, extensive logging, web support, and comprehensive documentation, it is ready for production use in both mobile and web applications, including seamless integration with FlutterFlow.
 
 For questions or support, please refer to the documentation included in this package or open an issue on GitHub.
 

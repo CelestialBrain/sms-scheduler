@@ -13,7 +13,7 @@ This project provides a complete solution for building a Flutter application tha
 
 ### Key Components
 
-1.  **Flutter Package (`sms_scheduler`)**: A reusable Flutter package that encapsulates all the core functionality.
+1.  **Flutter Package (`schedulersms`)**: A reusable Flutter package that encapsulates all the core functionality.
 2.  **Example App**: A sample Flutter application demonstrating how to use the package.
 3.  **Backend API**: A Node.js/Express backend that securely handles API integrations with third-party services.
 
@@ -78,9 +78,9 @@ Similar to eSIMs, direct API access for purchasing prepaid load from local telco
 2.  **Fund Your Wallet**: Most providers operate on a wallet system, where you deposit funds that are used for load purchases.
 3.  **Get API Credentials**: Once registered, you will receive API keys, a UID, a password, and a company prefix for your transactions.
 
-## 5. Flutter Package Implementation (`sms_scheduler`)
+## 5. Flutter Package Implementation (`schedulersms`)
 
-The `sms_scheduler` package is the core of this solution. It provides all the necessary tools to schedule, send, and manage SMS messages from your Flutter app.
+The `schedulersms` package is the core of this solution. It provides all the necessary tools to schedule, send, and manage SMS messages from your Flutter app.
 
 ### Package Structure
 
@@ -91,13 +91,13 @@ lib/
 │   ├── database/         # SQLite database for SMS storage
 │   ├── models/           # Data models (ScheduledSMS, SmsStatus)
 │   ├── utils/            # Utility functions (validators)
-│   └── sms_scheduler_service.dart # Main service class
-└── sms_scheduler.dart      # Main library file
+│   └── schedulersms_service.dart # Main service class
+└── schedulersms.dart      # Main library file
 ```
 
 ### Key Classes and Functions
 
--   `SmsSchedulerService`: The main entry point for all package functionality.
+-   `SchedulerSmsService`: The main entry point for all package functionality.
 -   `scheduleSms()`: Schedules a new SMS message.
 -   `updateScheduledSms()`: Updates an existing scheduled message.
 -   `deleteScheduledSms()`: Deletes a scheduled message.
@@ -105,7 +105,7 @@ lib/
 -   `ESimApiClient`: A client for interacting with eSIM provider APIs.
 -   `LoadApiClient`: A client for interacting with load reseller APIs.
 
-For detailed usage examples, please refer to the `README.md` file in the `sms_scheduler_package` directory.
+For detailed usage examples, please refer to the `README.md` file in the `schedulersms_package` directory.
 
 ## 6. Backend API Implementation
 
@@ -124,7 +124,7 @@ The provided backend is a simple Node.js/Express application that exposes endpoi
 1.  **Install Dependencies**:
 
     ```bash
-    cd sms_scheduler_package/backend_api
+    cd schedulersms_package/backend_api
     npm install
     ```
 
@@ -152,19 +152,19 @@ This solution is designed to be highly flexible and can be easily integrated int
 
 ### Integration Steps for FlutterFlow
 
-1.  **Add the Package**: Add the `sms_scheduler` package to your FlutterFlow project's `pubspec.yaml` file.
+1.  **Add the Package**: Add the `schedulersms` package to your FlutterFlow project's `pubspec.yaml` file.
 
 2.  **Create Custom Actions**: In FlutterFlow, create custom actions to call the package's functions. For example, to schedule an SMS:
 
     ```dart
-    import 'package:sms_scheduler/sms_scheduler.dart';
+    import 'package:schedulersms/schedulersms.dart';
 
     Future<void> scheduleSmsAction(
       String recipient,
       String message,
       DateTime scheduledDate,
     ) async {
-      final service = SmsSchedulerService();
+      final service = SchedulerSmsService();
       await service.initialize();
       await service.scheduleSms(
         recipient: recipient,
@@ -186,4 +186,4 @@ This solution is designed to be highly flexible and can be easily integrated int
 
 This comprehensive guide provides a complete solution for your Flutter SMS scheduling project. By following the steps outlined here, you can build a powerful and flexible application that meets all of your friend's requirements.
 
-For the complete source code, please refer to the attached `sms_scheduler_package.zip` file.
+For the complete source code, please refer to the attached `schedulersms_package.zip` file.

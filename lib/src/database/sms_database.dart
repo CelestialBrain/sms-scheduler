@@ -18,7 +18,7 @@ class SmsDatabase {
   Future<Database> get database async {
     if (kIsWeb) {
       throw UnsupportedError(
-        'The sqflite database is not available on web. Use SmsSchedulerWeb '
+        'The sqflite database is not available on web. Use SchedulerSmsWeb '
         'for web-compatible scheduling.',
       );
     }
@@ -31,7 +31,7 @@ class SmsDatabase {
   /// Initialize the database
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'sms_scheduler.db');
+    final path = join(databasePath, 'schedulersms.db');
 
     return await openDatabase(
       path,

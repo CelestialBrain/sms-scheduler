@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to set up a sandbox testing environment for your SMS Scheduler dependency before integrating it into your production FlutterFlow project.
+This guide explains how to set up a sandbox testing environment for your SchedulerSMS dependency before integrating it into your production FlutterFlow project.
 
 ---
 
@@ -57,7 +57,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
        data={
            "apikey": API_KEY,
            "number": PHONE,
-           "message": "Test message from SMS Scheduler"
+           "message": "Test message from SchedulerSMS"
        }
    )
    print(response.json())
@@ -106,8 +106,8 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
 
 2. **Create new Flutter web project**:
    ```bash
-   flutter create sms_scheduler_test
-   cd sms_scheduler_test
+   flutter create schedulersms_test
+   cd schedulersms_test
    ```
 
 3. **Add package dependency** to `pubspec.yaml`:
@@ -115,9 +115,9 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
    dependencies:
      flutter:
        sdk: flutter
-     sms_scheduler:
+     schedulersms:
        git:
-         url: https://github.com/CelestialBrain/sms-scheduler
+         url: https://github.com/CelestialBrain/schedulersms
          ref: main
    ```
 
@@ -129,7 +129,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
 5. **Create test UI** in `lib/main.dart`:
    ```dart
    import 'package:flutter/material.dart';
-   import 'package:sms_scheduler/sms_scheduler.dart';
+   import 'package:schedulersms/schedulersms.dart';
    
    void main() {
      runApp(MyApp());
@@ -139,7 +139,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
      @override
      Widget build(BuildContext context) {
        return MaterialApp(
-         title: 'SMS Scheduler Test',
+         title: 'SchedulerSMS Test',
          home: TestPage(),
        );
      }
@@ -158,7 +158,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
      
      Future<void> _initialize() async {
        try {
-         final scheduler = SmsSchedulerWebSemaphore();
+         final scheduler = SchedulerSmsWebSemaphore();
          await scheduler.initialize(apiKey: _apiKeyController.text);
          
          final account = await scheduler.getAccountInfo();
@@ -174,7 +174,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
      
      Future<void> _sendMessage() async {
        try {
-         final scheduler = SmsSchedulerWebSemaphore();
+         final scheduler = SchedulerSmsWebSemaphore();
          
          // Create customer
          final customer = await scheduler.createCustomer(
@@ -204,7 +204,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
      @override
      Widget build(BuildContext context) {
        return Scaffold(
-         appBar: AppBar(title: Text('SMS Scheduler Test')),
+         appBar: AppBar(title: Text('SchedulerSMS Test')),
          body: Padding(
            padding: EdgeInsets.all(16),
            child: Column(
@@ -268,13 +268,13 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
    - Go to https://app.flutterflow.io
    - Click "Create New Project"
    - Choose "Blank" template
-   - Name: "SMS Scheduler Test"
+   - Name: "SchedulerSMS Test"
 
 2. **Add package dependency**:
    - Go to **Settings & Integrations** → **Project Dependencies**
    - Click **Add Dependency**
    - Select **Git** tab
-   - Git URL: `https://github.com/CelestialBrain/sms-scheduler.git`
+   - Git URL: `https://github.com/CelestialBrain/schedulersms.git`
    - Click **Add**
 
 3. **Create App State Variables**:
@@ -286,16 +286,16 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
 4. **Create Custom Action: Initialize**:
    - Go to **Custom Code** → **Actions**
    - Click **Add Action**
-   - Name: `initializeSmsScheduler`
+   - Name: `initializeSchedulerSms`
    - Parameters: `apiKey` (String)
    - Return Type: `String`
    - Code:
    ```dart
-   import 'package:sms_scheduler/sms_scheduler.dart';
+   import 'package:schedulersms/schedulersms.dart';
    
-   Future<String> initializeSmsScheduler(String apiKey) async {
+   Future<String> initializeSchedulerSms(String apiKey) async {
      try {
-       final scheduler = SmsSchedulerWebSemaphore();
+       final scheduler = SchedulerSmsWebSemaphore();
        await scheduler.initialize(apiKey: apiKey);
        
        final account = await scheduler.getAccountInfo();
@@ -316,7 +316,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
    - Return Type: `String`
    - Code:
    ```dart
-   import 'package:sms_scheduler/sms_scheduler.dart';
+   import 'package:schedulersms/schedulersms.dart';
    
    Future<String> scheduleAppointmentReminder(
      String patientName,
@@ -325,7 +325,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
      int daysAfter,
    ) async {
      try {
-       final scheduler = SmsSchedulerWebSemaphore();
+       final scheduler = SchedulerSmsWebSemaphore();
        
        Customer? customer = await scheduler.getCustomerByPhone(patientPhone);
        if (customer == null) {
@@ -356,7 +356,7 @@ This guide explains how to set up a sandbox testing environment for your SMS Sch
 6. **Create Test UI**:
    - **Page 1: Setup Page**
      - TextField: API Key input
-     - Button: "Initialize" → Call `initializeSmsScheduler`
+     - Button: "Initialize" → Call `initializeSchedulerSms`
      - Text: Display result
    
    - **Page 2: Schedule Page**

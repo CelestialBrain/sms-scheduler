@@ -1,27 +1,27 @@
-/// FlutterFlow Custom Actions for SMS Scheduler with Semaphore API
+/// FlutterFlow Custom Actions for SchedulerSMS with Semaphore API
 /// 
-/// Copy these custom actions into your FlutterFlow project to use the SMS Scheduler.
-/// Make sure to add the sms_scheduler package to your project dependencies first.
+/// Copy these custom actions into your FlutterFlow project to use the SchedulerSMS.
+/// Make sure to add the schedulersms package to your project dependencies first.
 
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 // ============================================================================
 // INITIALIZATION
 // ============================================================================
 
-/// Initialize the SMS Scheduler with Semaphore API for web
+/// Initialize the SchedulerSMS with Semaphore API for web
 /// 
 /// Call this action when your app starts (e.g., in the initial page's "On Page Load" action)
 /// 
 /// Parameters:
 /// - apiKey: Your Semaphore API key (get it from https://semaphore.co/)
 /// - senderName: Optional custom sender name (defaults to "SEMAPHORE")
-Future<String> initializeSmsSchedulerSemaphore(
+Future<String> initializeSchedulerSmsSemaphore(
   String apiKey, {
   String? senderName,
 }) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.initialize(
       apiKey: apiKey,
       senderName: senderName,
@@ -52,7 +52,7 @@ Future<String> createCustomer(
   String? email,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     final customer = await scheduler.createCustomer(
       name: name,
@@ -71,7 +71,7 @@ Future<String> createCustomer(
 /// Returns a list of customer maps that can be displayed in a ListView
 Future<List<dynamic>> getAllCustomers() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final customers = await scheduler.getAllCustomers();
     
     return customers.map((customer) => customer.toMap()).toList();
@@ -83,7 +83,7 @@ Future<List<dynamic>> getAllCustomers() async {
 /// Get a single customer by ID
 Future<dynamic> getCustomer(String customerId) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final customer = await scheduler.getCustomer(customerId);
     
     if (customer == null) {
@@ -99,7 +99,7 @@ Future<dynamic> getCustomer(String customerId) async {
 /// Search customers by name or phone number
 Future<List<dynamic>> searchCustomers(String query) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final customers = await scheduler.searchCustomers(query);
     
     return customers.map((customer) => customer.toMap()).toList();
@@ -116,7 +116,7 @@ Future<void> updateCustomer(
   String? email,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     await scheduler.updateCustomer(
       id: customerId,
@@ -132,7 +132,7 @@ Future<void> updateCustomer(
 /// Delete a customer
 Future<void> deleteCustomer(String customerId) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.deleteCustomer(customerId);
   } catch (e) {
     throw Exception('Failed to delete customer: $e');
@@ -157,7 +157,7 @@ Future<String> scheduleSmsForCustomer(
   DateTime scheduledDate,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     // Get the customer
     final customer = await scheduler.getCustomer(customerId);
@@ -191,7 +191,7 @@ Future<String> scheduleSmsDirectly(
   DateTime scheduledDate,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     // Create a temporary customer or find existing one
     Customer? customer = await scheduler.getCustomerByPhone(phoneNumber);
@@ -220,7 +220,7 @@ Future<String> scheduleSmsDirectly(
 /// Get all scheduled messages
 Future<List<dynamic>> getAllScheduledMessages() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final messages = await scheduler.getAllScheduledSms();
     
     return messages.map((sms) => sms.toMap()).toList();
@@ -232,7 +232,7 @@ Future<List<dynamic>> getAllScheduledMessages() async {
 /// Get scheduled messages for a specific customer
 Future<List<dynamic>> getScheduledMessagesForCustomer(String customerId) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final messages = await scheduler.getScheduledSmsForCustomer(customerId);
     
     return messages.map((sms) => sms.toMap()).toList();
@@ -244,7 +244,7 @@ Future<List<dynamic>> getScheduledMessagesForCustomer(String customerId) async {
 /// Cancel a scheduled SMS
 Future<void> cancelScheduledSms(String smsId) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.cancelScheduledSms(smsId);
   } catch (e) {
     throw Exception('Failed to cancel SMS: $e');
@@ -254,7 +254,7 @@ Future<void> cancelScheduledSms(String smsId) async {
 /// Delete a scheduled SMS
 Future<void> deleteScheduledSms(String smsId) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.deleteScheduledSms(smsId);
   } catch (e) {
     throw Exception('Failed to delete SMS: $e');
@@ -268,7 +268,7 @@ Future<void> updateScheduledSms(
   DateTime? scheduledDate,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     await scheduler.updateScheduledSms(
       id: smsId,
@@ -289,7 +289,7 @@ Future<void> updateScheduledSms(
 /// Returns a map with account details including credit balance
 Future<dynamic> getSemaphoreAccountInfo() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final account = await scheduler.getAccountInfo();
     
     return account.toJson();
@@ -301,7 +301,7 @@ Future<dynamic> getSemaphoreAccountInfo() async {
 /// Get account credit balance only
 Future<double> getAccountBalance() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final account = await scheduler.getAccountInfo();
     
     return account.creditBalance;

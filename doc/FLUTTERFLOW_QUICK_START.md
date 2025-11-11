@@ -1,4 +1,4 @@
-# FlutterFlow Quick Start - SMS Scheduler Testing
+# FlutterFlow Quick Start - SchedulerSMS Testing
 
 **⏱️ Time**: 90 minutes  
 **📱 What You'll Build**: SMS appointment reminder system  
@@ -19,11 +19,11 @@
 
 ### 1. Create Project
 - Go to https://app.flutterflow.io
-- Create new project: "SMS Scheduler Test"
+- Create new project: "SchedulerSMS Test"
 
 ### 2. Add Package
 - Settings → Project Dependencies
-- Add Git dependency: `https://github.com/CelestialBrain/sms-scheduler.git`
+- Add Git dependency: `https://github.com/CelestialBrain/schedulersms.git`
 
 ### 3. Create App State
 - App Settings → App State
@@ -37,16 +37,16 @@
 
 ## Custom Actions to Create (30 min)
 
-### Action 1: initializeSmsScheduler
+### Action 1: initializeSchedulerSms
 **Parameters**: `apiKey` (String)  
 **Returns**: String
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<String> initializeSmsScheduler(String apiKey) async {
+Future<String> initializeSchedulerSms(String apiKey) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.initialize(apiKey: apiKey);
     final account = await scheduler.getAccountInfo();
     return 'Success! Balance: ${account.creditBalance} credits';
@@ -63,11 +63,11 @@ Future<String> initializeSmsScheduler(String apiKey) async {
 **Returns**: Double
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<double> getAccountBalance() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final account = await scheduler.getAccountInfo();
     return account.creditBalance;
   } catch (e) {
@@ -89,7 +89,7 @@ Future<double> getAccountBalance() async {
 **Returns**: String
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleAppointmentReminder(
   String patientName,
@@ -99,7 +99,7 @@ Future<String> scheduleAppointmentReminder(
   String clinicName,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     Customer? customer = await scheduler.getCustomerByPhone(patientPhone);
     if (customer == null) {
@@ -161,11 +161,11 @@ bool validatePhilippinePhone(String phoneNumber) {
 **Widgets**:
 ```
 Column
-├─ Text: "SMS Scheduler Setup" (size 24, bold)
+├─ Text: "SchedulerSMS Setup" (size 24, bold)
 ├─ TextField: apiKeyField (label: "Semaphore API Key")
 ├─ Button: "Initialize Scheduler"
 │  └─ Actions:
-│     1. Call initializeSmsScheduler(apiKeyField)
+│     1. Call initializeSchedulerSms(apiKeyField)
 │     2. Update App State: apiKey = apiKeyField
 │     3. Update App State: isInitialized = true
 │     4. Update App State: statusMessage = result

@@ -43,7 +43,7 @@ extension LogLevelExtension on LogLevel {
   }
 }
 
-/// Comprehensive logging system for SMS Scheduler
+/// Comprehensive logging system for SchedulerSMS
 class SmsLogger {
   static final SmsLogger _instance = SmsLogger._internal();
   factory SmsLogger() => _instance;
@@ -285,7 +285,7 @@ class SmsLogger {
     // Use developer.log for better integration with Flutter DevTools
     developer.log(
       formattedMessage,
-      name: 'SmsScheduler',
+      name: 'SchedulerSms',
       level: _getLevelValue(level),
       error: error,
       stackTrace: stackTrace,

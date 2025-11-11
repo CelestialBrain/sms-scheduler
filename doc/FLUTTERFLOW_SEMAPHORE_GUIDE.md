@@ -1,17 +1,17 @@
 # FlutterFlow Integration Guide - Semaphore SMS API
 
-This guide provides complete step-by-step instructions for integrating the SMS Scheduler package with Semaphore SMS API into your FlutterFlow application.
+This guide provides complete step-by-step instructions for integrating the SchedulerSMS package with Semaphore SMS API into your FlutterFlow application.
 
 ## Overview
 
-The SMS Scheduler package now includes native support for **Semaphore SMS API**, a Philippine-based SMS service provider with affordable rates and reliable delivery. You can keep the Semaphore API key out of source control by passing it into the scheduler at runtime (for example, from a secure text field or app setting in FlutterFlow).
+The SchedulerSMS package now includes native support for **Semaphore SMS API**, a Philippine-based SMS service provider with affordable rates and reliable delivery. You can keep the Semaphore API key out of source control by passing it into the scheduler at runtime (for example, from a secure text field or app setting in FlutterFlow).
 
 ## Prerequisites
 
 Before you begin, ensure you have:
 
 1. A FlutterFlow account and project
-2. Access to the `sms-scheduler` package from the GitHub repository
+2. Access to the `schedulersms` package from the GitHub repository
 3. Your Semaphore API key (stored securely outside the repository)
 
 ## Step 1: Add the Package to FlutterFlow
@@ -23,7 +23,7 @@ Before you begin, ensure you have:
 3. Click **Add Dependency**
 4. Select **Git** tab
 5. Enter the following details:
-   - **Git URL**: `https://github.com/CelestialBrain/sms-scheduler.git`
+   - **Git URL**: `https://github.com/CelestialBrain/schedulersms.git`
    - **Ref** (optional): Leave blank for latest, or specify a branch/tag
 6. Click **Add**
 
@@ -31,17 +31,17 @@ Before you begin, ensure you have:
 
 1. Navigate to **Settings & Integrations** → **Project Dependencies**
 2. Click **Add Dependency**
-3. Search for `sms_scheduler`
+3. Search for `schedulersms`
 4. Select version `^2.0.0` or later
 5. Click **Add**
 
 ## Step 2: Create Custom Actions
 
-FlutterFlow uses "Custom Actions" to execute Dart code. You'll need to create custom actions for each SMS Scheduler operation.
+FlutterFlow uses "Custom Actions" to execute Dart code. You'll need to create custom actions for each SchedulerSMS operation.
 
-### 2.1. Initialize SMS Scheduler
+### 2.1. Initialize SchedulerSMS
 
-**Action Name**: `initializeSmsSchedulerSemaphore`
+**Action Name**: `initializeSchedulerSmsSemaphore`
 
 **Parameters**: `apiKey` (String)
 
@@ -49,11 +49,11 @@ FlutterFlow uses "Custom Actions" to execute Dart code. You'll need to create cu
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<String> initializeSmsSchedulerSemaphore(String apiKey) async {
+Future<String> initializeSchedulerSmsSemaphore(String apiKey) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.initialize(apiKey: apiKey);
 
     // Get account info to verify connection
@@ -81,7 +81,7 @@ Future<String> initializeSmsSchedulerSemaphore(String apiKey) async {
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> createCustomer(
   String name,
@@ -89,7 +89,7 @@ Future<String> createCustomer(
   String? email,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     final customer = await scheduler.createCustomer(
       name: name,
@@ -117,7 +117,7 @@ Future<String> createCustomer(
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleSmsForCustomer(
   String customerId,
@@ -125,7 +125,7 @@ Future<String> scheduleSmsForCustomer(
   DateTime scheduledDate,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     // Get the customer
     final customer = await scheduler.getCustomer(customerId);
@@ -161,7 +161,7 @@ Future<String> scheduleSmsForCustomer(
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleSmsDirectly(
   String phoneNumber,
@@ -169,7 +169,7 @@ Future<String> scheduleSmsDirectly(
   DateTime scheduledDate,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     // Find or create customer
     Customer? customer = await scheduler.getCustomerByPhone(phoneNumber);
@@ -203,11 +203,11 @@ Future<String> scheduleSmsDirectly(
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<List<dynamic>> getAllCustomers() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final customers = await scheduler.getAllCustomers();
     
     return customers.map((customer) => customer.toMap()).toList();
@@ -225,11 +225,11 @@ Future<List<dynamic>> getAllCustomers() async {
 
 **Code**:
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<double> getAccountBalance() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final account = await scheduler.getAccountInfo();
     
     return account.creditBalance;
@@ -241,7 +241,7 @@ Future<double> getAccountBalance() async {
 
 ## Step 3: Build Your FlutterFlow UI
 
-### 3.1. Simple SMS Scheduler Page
+### 3.1. Simple SchedulerSMS Page
 
 Create a simple page with three fields:
 
@@ -333,7 +333,7 @@ bool isValidPhilippineNumber(String phoneNumber) {
 
 ### API Key Security
 
-Collect the Semaphore API key at runtime (for example, from the `apiKeyField` text field shown in the quick start) and pass it into `initializeSmsSchedulerSemaphore`. Avoid hardcoding the key in your repository or FlutterFlow project settings. If you need to persist the key between sessions, store it in FlutterFlow's secure storage or an encrypted backend endpoint.
+Collect the Semaphore API key at runtime (for example, from the `apiKeyField` text field shown in the quick start) and pass it into `initializeSchedulerSmsSemaphore`. Avoid hardcoding the key in your repository or FlutterFlow project settings. If you need to persist the key between sessions, store it in FlutterFlow's secure storage or an encrypted backend endpoint.
 
 ### Message Costs
 
@@ -362,7 +362,7 @@ Supported networks:
 
 ### Issue: "Failed to initialize Semaphore API"
 
-**Solution**: Check your internet connection and verify the API key text field or app state contains a valid Semaphore key before calling `initializeSmsSchedulerSemaphore`.
+**Solution**: Check your internet connection and verify the API key text field or app state contains a valid Semaphore key before calling `initializeSchedulerSmsSemaphore`.
 
 ### Issue: "Invalid phone number"
 
@@ -380,14 +380,14 @@ Supported networks:
 3. Review the message status in the database
 4. Check the logs for error messages
 
-## Complete Example: Simple SMS Scheduler App
+## Complete Example: Simple SchedulerSMS App
 
 Here's a complete example of a minimal SMS scheduler app:
 
 ### Page 1: Home Page
 
 **Widgets**:
-- Text: "SMS Scheduler"
+- Text: "SchedulerSMS"
 - Text: "Balance: ${balance} credits"
 - TextField: `phoneNumber`
 - TextField: `message`
@@ -400,7 +400,7 @@ Here's a complete example of a minimal SMS scheduler app:
 **On Page Load**:
 ```dart
 // Initialize scheduler
-await initializeSmsSchedulerSemaphore();
+await initializeSchedulerSmsSemaphore();
 
 // Get balance
 balance = await getAccountBalance();

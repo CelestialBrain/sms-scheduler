@@ -10,8 +10,8 @@ import 'utils/sms_logger.dart';
 /// 
 /// On web platforms, SMS cannot be sent directly. Instead, this implementation
 /// provides integration points for web-based SMS APIs (like Twilio, etc.)
-class SmsSchedulerWeb {
-  static final SmsSchedulerWeb _instance = SmsSchedulerWeb._internal();
+class SchedulerSmsWeb {
+  static final SchedulerSmsWeb _instance = SchedulerSmsWeb._internal();
   final SmsDatabase _database = SmsDatabase();
   final SmsLogger _logger = SmsLogger();
 
@@ -22,9 +22,9 @@ class SmsSchedulerWeb {
   /// This should be set by the application to integrate with their SMS API
   Future<bool> Function(ScheduledSMS sms)? webSmsSender;
 
-  factory SmsSchedulerWeb() => _instance;
+  factory SchedulerSmsWeb() => _instance;
 
-  SmsSchedulerWeb._internal();
+  SchedulerSmsWeb._internal();
 
   /// Stream of SMS status updates
   Stream<ScheduledSMS> get statusStream => _statusController.stream;
@@ -33,7 +33,7 @@ class SmsSchedulerWeb {
   Future<void> initialize({
     Future<bool> Function(ScheduledSMS sms)? customSmsSender,
   }) async {
-    _logger.info('Initializing SMS Scheduler for Web');
+    _logger.info('Initializing SchedulerSMS for Web');
     
     if (customSmsSender != null) {
       webSmsSender = customSmsSender;

@@ -1,4 +1,4 @@
-# SMS Scheduler - Semaphore Edition
+# SchedulerSMS - Semaphore Edition
 
 A powerful and flexible Flutter package for scheduling SMS messages with **native Semaphore SMS API integration**. Designed for seamless integration with FlutterFlow and custom Flutter applications, with a focus on Philippine SMS delivery.
 
@@ -30,26 +30,26 @@ Add this package to your FlutterFlow project:
 
 **Git Repository**:
 ```
-https://github.com/CelestialBrain/sms-scheduler.git
+https://github.com/CelestialBrain/schedulersms.git
 ```
 
 Or add to `pubspec.yaml`:
 ```yaml
 dependencies:
-  sms_scheduler:
+  schedulersms:
     git:
-      url: https://github.com/CelestialBrain/sms-scheduler.git
+      url: https://github.com/CelestialBrain/schedulersms.git
 ```
 
 ### 2. Initialize in FlutterFlow
 
-Create a custom action called `initializeSmsScheduler`:
+Create a custom action called `initializeSchedulerSms`:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<String> initializeSmsScheduler() async {
-  final scheduler = SmsSchedulerWebSemaphore();
+Future<String> initializeSchedulerSms() async {
+  final scheduler = SchedulerSmsWebSemaphore();
   await scheduler.initialize();
   
   final account = await scheduler.getAccountInfo();
@@ -64,14 +64,14 @@ Call this action when your app starts.
 Create a custom action to schedule an SMS:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleSms(
   String phoneNumber,
   String message,
   DateTime scheduledDate,
 ) async {
-  final scheduler = SmsSchedulerWebSemaphore();
+  final scheduler = SchedulerSmsWebSemaphore();
   
   // Find or create customer
   Customer? customer = await scheduler.getCustomerByPhone(phoneNumber);
@@ -143,7 +143,7 @@ Here are the essential custom actions you'll need:
 
 ### Initialize
 ```dart
-Future<String> initializeSmsSchedulerSemaphore()
+Future<String> initializeSchedulerSmsSemaphore()
 ```
 
 ### Customer Management
@@ -226,8 +226,8 @@ lib/
 │   ├── utils/
 │   │   ├── sms_logger.dart               # Logging system
 │   │   └── sms_validator.dart            # Phone number validation
-│   └── sms_scheduler_web_semaphore.dart  # Main service
-└── sms_scheduler.dart                     # Package exports
+│   └── schedulersms_web_semaphore.dart  # Main service
+└── schedulersms.dart                     # Package exports
 ```
 
 ## Logging and Debugging
@@ -235,7 +235,7 @@ lib/
 The package includes comprehensive logging:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 final logger = SmsLogger();
 

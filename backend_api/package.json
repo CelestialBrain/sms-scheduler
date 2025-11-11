@@ -1,7 +1,7 @@
 {
-  "name": "sms_scheduler_backend",
+  "name": "schedulersms_backend",
   "version": "1.0.0",
-  "description": "Backend API for the Flutter SMS Scheduler package",
+  "description": "Backend API for the Flutter SchedulerSMS package",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

@@ -13,8 +13,8 @@ import 'models/sms_status.dart';
 import 'utils/sms_logger.dart';
 
 /// Main service for scheduling and sending SMS messages
-class SmsSchedulerService {
-  static final SmsSchedulerService _instance = SmsSchedulerService._internal();
+class SchedulerSmsService {
+  static final SchedulerSmsService _instance = SchedulerSmsService._internal();
   final telephony.Telephony _telephony = telephony.Telephony.instance;
   final SmsDatabase _database = SmsDatabase();
   final CustomerDatabase _customerDatabase = CustomerDatabase();
@@ -30,9 +30,9 @@ class SmsSchedulerService {
   /// Stream controller for SMS status updates
   final _statusController = StreamController<ScheduledSMS>.broadcast();
 
-  factory SmsSchedulerService() => _instance;
+  factory SchedulerSmsService() => _instance;
 
-  SmsSchedulerService._internal();
+  SchedulerSmsService._internal();
 
   /// Stream of SMS status updates
   Stream<ScheduledSMS> get statusStream => _statusController.stream;
@@ -41,7 +41,7 @@ class SmsSchedulerService {
   Future<void> initialize() async {
     if (kIsWeb) {
       throw UnsupportedError(
-        'SmsSchedulerService is not supported on web. Use SmsSchedulerWeb '
+        'SchedulerSmsService is not supported on web. Use SchedulerSmsWeb '
         'with a custom SMS sender instead.',
       );
     }
@@ -50,7 +50,7 @@ class SmsSchedulerService {
     final permissionsGranted = await _telephony.requestPhoneAndSmsPermissions;
 
     if (!permissionsGranted!) {
-      _logger.error('SMS permissions not granted. SmsSchedulerService cannot initialize.');
+      _logger.error('SMS permissions not granted. SchedulerSmsService cannot initialize.');
       throw Exception('SMS permissions not granted');
     }
 
@@ -69,7 +69,7 @@ class SmsSchedulerService {
       );
 
       await Workmanager().registerPeriodicTask(
-        'sms-scheduler-check',
+        'schedulersms-check',
         'checkPendingSms',
         frequency: const Duration(minutes: 15),
         constraints: Constraints(
@@ -487,7 +487,7 @@ void callbackDispatcher() {
   final logger = SmsLogger();
   Workmanager().executeTask((task, inputData) async {
     try {
-      final service = SmsSchedulerService();
+      final service = SchedulerSmsService();
       await service.checkAndSendPendingSms();
       logger.logBackgroundTask(taskName: task, success: true, data: inputData);
       return true;

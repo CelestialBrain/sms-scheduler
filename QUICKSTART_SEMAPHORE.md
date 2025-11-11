@@ -1,4 +1,4 @@
-# Quick Start Guide - SMS Scheduler with Semaphore
+# Quick Start Guide - SchedulerSMS with Semaphore
 
 Get your SMS scheduler up and running in FlutterFlow in **5 minutes**!
 
@@ -7,23 +7,23 @@ Get your SMS scheduler up and running in FlutterFlow in **5 minutes**!
 1. Open your FlutterFlow project
 2. Go to **Settings & Integrations** → **Project Dependencies**
 3. Click **Add Dependency** → **Git** tab
-4. Enter: `https://github.com/CelestialBrain/sms-scheduler.git`
+4. Enter: `https://github.com/CelestialBrain/schedulersms.git`
 5. Click **Add**
 
 ## Step 2: Create Initialize Action (1 minute)
 
 1. Go to **Custom Code** → **Actions**
 2. Click **+ Add Action**
-3. Name: `initializeSmsScheduler`
+3. Name: `initializeSchedulerSms`
 4. Parameters: `apiKey` (String)
 5. Return Type: `Future<String>`
 6. Paste this code:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<String> initializeSmsScheduler(String apiKey) async {
-  final scheduler = SmsSchedulerWebSemaphore();
+Future<String> initializeSchedulerSms(String apiKey) async {
+  final scheduler = SchedulerSmsWebSemaphore();
   await scheduler.initialize(apiKey: apiKey);
   final account = await scheduler.getAccountInfo();
   return 'Balance: ${account.creditBalance} credits';
@@ -44,14 +44,14 @@ Future<String> initializeSmsScheduler(String apiKey) async {
 5. Paste this code:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleSms(
   String phoneNumber,
   String message,
   DateTime scheduledDate,
 ) async {
-  final scheduler = SmsSchedulerWebSemaphore();
+  final scheduler = SchedulerSmsWebSemaphore();
   
   Customer? customer = await scheduler.getCustomerByPhone(phoneNumber);
   if (customer == null) {
@@ -75,7 +75,7 @@ Future<String> scheduleSms(
 
 ## Step 4: Build UI (2 minutes)
 
-1. Create a new page called **SMS Scheduler**
+1. Create a new page called **SchedulerSMS**
 2. Add these widgets:
    - **Column** (main container)
    - **Text**: "Semaphore API Key"
@@ -90,7 +90,7 @@ Future<String> scheduleSms(
 
 3. Set up the **Connect** button action:
    - Add Action → **Custom Action**
-   - Select `initializeSmsScheduler`
+   - Select `initializeSchedulerSms`
    - Map `apiKey` to `apiKeyField`'s text value
    - Add Action → **Show Snackbar**
    - Message: Action output (e.g., "Initialized successfully…")

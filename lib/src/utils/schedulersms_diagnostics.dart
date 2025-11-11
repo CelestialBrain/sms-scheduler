@@ -5,12 +5,12 @@ import '../database/sms_database.dart';
 import '../models/customer.dart';
 import '../models/scheduled_sms.dart';
 import '../models/sms_status.dart';
-import '../sms_scheduler_service.dart';
-import '../sms_scheduler_web.dart';
+import '../schedulersms_service.dart';
+import '../schedulersms_web.dart';
 import 'sms_logger.dart';
 
 /// Structured result for diagnostics run.
-class SmsSchedulerDiagnosticsResult {
+class SchedulerSmsDiagnosticsResult {
   /// Ordered list of informational log messages captured during diagnostics.
   final List<String> logs;
 
@@ -20,7 +20,7 @@ class SmsSchedulerDiagnosticsResult {
   /// Additional contextual metadata captured during the diagnostics session.
   final Map<String, dynamic> metadata;
 
-  SmsSchedulerDiagnosticsResult({
+  SchedulerSmsDiagnosticsResult({
     required this.logs,
     required this.errors,
     required this.metadata,
@@ -32,7 +32,7 @@ class SmsSchedulerDiagnosticsResult {
   /// Convert the diagnostics result into a console-friendly multi-line string.
   String toConsoleString() {
     final buffer = StringBuffer()
-      ..writeln('=== SmsScheduler Diagnostics Report ===')
+      ..writeln('=== SchedulerSms Diagnostics Report ===')
       ..writeln('Timestamp: ${metadata['timestamp']}')
       ..writeln('Platform: ${metadata['platform']}')
       ..writeln('Scheduler: ${metadata['scheduler']}')
@@ -80,19 +80,19 @@ class SmsSchedulerDiagnosticsResult {
   String toString() => toConsoleString();
 }
 
-/// Utility runner that exercises SmsScheduler behaviours and surfaces errors.
-class SmsSchedulerDiagnostics {
+/// Utility runner that exercises SchedulerSms behaviours and surfaces errors.
+class SchedulerSmsDiagnostics {
   /// Execute diagnostics against the most appropriate scheduler for the platform.
   ///
-  /// When [forceWebScheduler] is true, diagnostics run against [SmsSchedulerWeb]
+  /// When [forceWebScheduler] is true, diagnostics run against [SchedulerSmsWeb]
   /// regardless of the platform. When false (default), the web scheduler is used
   /// only when the app is running on web. Diagnostics always simulate sending and
   /// never attempt to deliver real SMS messages.
-  static Future<SmsSchedulerDiagnosticsResult> run({
+  static Future<SchedulerSmsDiagnosticsResult> run({
     bool? forceWebScheduler,
     Duration scheduleOffset = const Duration(minutes: 2),
     String testRecipient = '+15555550123',
-    String testMessage = 'SmsScheduler diagnostics message',
+    String testMessage = 'SchedulerSms diagnostics message',
   }) async {
     final logs = <String>[];
     final errors = <String>[];
@@ -100,14 +100,14 @@ class SmsSchedulerDiagnostics {
     final baselineLength = logger.logHistory.length;
 
     void log(String message) {
-      final formatted = '[SmsSchedulerDiagnostics] $message';
+      final formatted = '[SchedulerSmsDiagnostics] $message';
       debugPrint(formatted);
       logs.add(message);
     }
 
     void recordError(String context, Object error, [StackTrace? stackTrace]) {
       final message = '$context: $error';
-      final formatted = '[SmsSchedulerDiagnostics][ERROR] $message';
+      final formatted = '[SchedulerSmsDiagnostics][ERROR] $message';
       debugPrint(formatted);
       if (stackTrace != null) {
         debugPrint(stackTrace.toString());
@@ -138,8 +138,8 @@ class SmsSchedulerDiagnostics {
     }
 
     if (useWebScheduler) {
-      final scheduler = SmsSchedulerWeb();
-      await captureStep('Initializing SmsSchedulerWeb', () async {
+      final scheduler = SchedulerSmsWeb();
+      await captureStep('Initializing SchedulerSmsWeb', () async {
         await scheduler.initialize(customSmsSender: (sms) async {
           log('Simulating web SMS send for ${sms.id} -> ${sms.recipient}');
           await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -201,9 +201,9 @@ class SmsSchedulerDiagnostics {
 
       scheduler.dispose();
     } else {
-      final scheduler = SmsSchedulerService();
+      final scheduler = SchedulerSmsService();
 
-      await captureStep('Initializing SmsSchedulerService', () async {
+      await captureStep('Initializing SchedulerSmsService', () async {
         await scheduler.initialize();
       });
 
@@ -279,7 +279,7 @@ class SmsSchedulerDiagnostics {
     metadata['errorsDetected'] = errors.length;
     metadata['logsCaptured'] = logs.length;
 
-    return SmsSchedulerDiagnosticsResult(
+    return SchedulerSmsDiagnosticsResult(
       logs: logs,
       errors: errors,
       metadata: metadata,
@@ -287,14 +287,14 @@ class SmsSchedulerDiagnostics {
   }
 }
 
-/// Convenience helper that delegates to [SmsSchedulerDiagnostics.run].
-Future<SmsSchedulerDiagnosticsResult> runSmsSchedulerDiagnostics({
+/// Convenience helper that delegates to [SchedulerSmsDiagnostics.run].
+Future<SchedulerSmsDiagnosticsResult> runSchedulerSmsDiagnostics({
   bool? forceWebScheduler,
   Duration scheduleOffset = const Duration(minutes: 2),
   String testRecipient = '+15555550123',
-  String testMessage = 'SmsScheduler diagnostics message',
+  String testMessage = 'SchedulerSms diagnostics message',
 }) {
-  return SmsSchedulerDiagnostics.run(
+  return SchedulerSmsDiagnostics.run(
     forceWebScheduler: forceWebScheduler,
     scheduleOffset: scheduleOffset,
     testRecipient: testRecipient,

@@ -1,6 +1,6 @@
 # Error Analysis and Logging Guide
 
-This guide provides detailed instructions on how to use the extensive logging features of the SMS Scheduler package to diagnose and resolve common issues.
+This guide provides detailed instructions on how to use the extensive logging features of the SchedulerSMS package to diagnose and resolve common issues.
 
 ## 1. Understanding the Logging System
 
@@ -14,7 +14,7 @@ The package includes a powerful `SmsLogger` that captures detailed information a
 ### Accessing the Logger
 
 ```dart
-import 'package:sms_scheduler/src/utils/sms_logger.dart';
+import 'package:schedulersms/src/utils/sms_logger.dart';
 
 final logger = SmsLogger();
 ```

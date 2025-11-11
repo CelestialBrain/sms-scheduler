@@ -1,6 +1,6 @@
 # FlutterFlow Testing Guide - Step-by-Step
 
-**Project**: SMS Scheduler for Dental Appointments  
+**Project**: SchedulerSMS for Dental Appointments  
 **Purpose**: Complete testing workflow for FlutterFlow  
 **Time Required**: 1-2 hours  
 **Difficulty**: Beginner-friendly  
@@ -9,7 +9,7 @@
 
 ## Overview
 
-This guide walks you through **exactly what to create** in FlutterFlow to test your SMS Scheduler dependency. Follow each step in order.
+This guide walks you through **exactly what to create** in FlutterFlow to test your SchedulerSMS dependency. Follow each step in order.
 
 ---
 
@@ -20,7 +20,7 @@ This guide walks you through **exactly what to create** in FlutterFlow to test y
 1. Go to https://app.flutterflow.io
 2. Click **"Create New Project"**
 3. Choose **"Blank"** template
-4. Name: **"SMS Scheduler Test"**
+4. Name: **"SchedulerSMS Test"**
 5. Click **"Create"**
 
 ### Step 1.2: Add Package Dependency
@@ -30,7 +30,7 @@ This guide walks you through **exactly what to create** in FlutterFlow to test y
 3. Click **"+ Add Dependency"**
 4. Select **"Git"** tab
 5. Fill in:
-   - **Git URL**: `https://github.com/CelestialBrain/sms-scheduler.git`
+   - **Git URL**: `https://github.com/CelestialBrain/schedulersms.git`
    - **Ref**: `main` (or leave blank)
 6. Click **"Add"**
 7. Wait for package to be added (green checkmark appears)
@@ -60,8 +60,8 @@ This guide walks you through **exactly what to create** in FlutterFlow to test y
 1. Go to **Custom Code** → **Actions** (in left sidebar)
 2. Click **"+ Add Action"**
 3. Fill in:
-   - **Action Name**: `initializeSmsScheduler`
-   - **Description**: `Initialize SMS Scheduler with Semaphore API`
+   - **Action Name**: `initializeSchedulerSms`
+   - **Description**: `Initialize SchedulerSMS with Semaphore API`
 
 4. **Add Parameters**:
    - Click **"+ Add Parameter"**
@@ -75,12 +75,12 @@ This guide walks you through **exactly what to create** in FlutterFlow to test y
 6. **Add Code**:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
-Future<String> initializeSmsScheduler(String apiKey) async {
+Future<String> initializeSchedulerSms(String apiKey) async {
   try {
     // Initialize the scheduler
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     await scheduler.initialize(apiKey: apiKey);
     
     // Get account info to verify connection
@@ -114,11 +114,11 @@ Future<String> initializeSmsScheduler(String apiKey) async {
 5. **Add Code**:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<double> getAccountBalance() async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     final account = await scheduler.getAccountInfo();
     return account.creditBalance;
   } catch (e) {
@@ -155,7 +155,7 @@ Future<double> getAccountBalance() async {
 5. **Add Code**:
 
 ```dart
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 
 Future<String> scheduleAppointmentReminder(
   String patientName,
@@ -165,7 +165,7 @@ Future<String> scheduleAppointmentReminder(
   String clinicName,
 ) async {
   try {
-    final scheduler = SmsSchedulerWebSemaphore();
+    final scheduler = SchedulerSmsWebSemaphore();
     
     // Find or create customer
     Customer? customer = await scheduler.getCustomerByPhone(patientPhone);
@@ -259,7 +259,7 @@ bool validatePhilippinePhone(String phoneNumber) {
 **Layout Structure:**
 ```
 Column (Main Axis: Center, Cross Axis: Center)
-├─ Text: "SMS Scheduler Setup"
+├─ Text: "SchedulerSMS Setup"
 ├─ TextField: apiKeyField
 ├─ Button: "Initialize"
 └─ Text: statusText
@@ -278,7 +278,7 @@ Column (Main Axis: Center, Cross Axis: Center)
 
 3. **Add Title Text**:
    - Drag **Text** into Column
-   - Text: `"SMS Scheduler Setup"`
+   - Text: `"SchedulerSMS Setup"`
    - Font Size: `24`
    - Font Weight: `Bold`
    - Margin Bottom: `32`
@@ -304,7 +304,7 @@ Column (Main Axis: Center, Cross Axis: Center)
      
      **Action 1: Call Custom Action**
      - Action: `Custom Action`
-     - Select: `initializeSmsScheduler`
+     - Select: `initializeSchedulerSms`
      - Parameters:
        - `apiKey`: `Widget State → apiKeyField`
      - Action Output Variable Name: `initResult`
@@ -713,7 +713,7 @@ Use this checklist to ensure everything works:
 ## Quick Reference
 
 ### Custom Actions Created
-1. `initializeSmsScheduler(apiKey)` → String
+1. `initializeSchedulerSms(apiKey)` → String
 2. `getAccountBalance()` → Double
 3. `scheduleAppointmentReminder(...)` → String
 4. `validatePhilippinePhone(phoneNumber)` → Boolean

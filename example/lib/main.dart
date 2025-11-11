@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sms_scheduler/sms_scheduler.dart';
+import 'package:schedulersms/schedulersms.dart';
 import 'package:intl/intl.dart';
 
 void main() {
@@ -12,25 +12,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SMS Scheduler Demo',
+      title: 'SchedulerSMS Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const SmsSchedulerHomePage(),
+      home: const SchedulerSmsHomePage(),
     );
   }
 }
 
-class SmsSchedulerHomePage extends StatefulWidget {
-  const SmsSchedulerHomePage({super.key});
+class SchedulerSmsHomePage extends StatefulWidget {
+  const SchedulerSmsHomePage({super.key});
 
   @override
-  State<SmsSchedulerHomePage> createState() => _SmsSchedulerHomePageState();
+  State<SchedulerSmsHomePage> createState() => _SchedulerSmsHomePageState();
 }
 
-class _SmsSchedulerHomePageState extends State<SmsSchedulerHomePage> {
-  final _smsService = SmsSchedulerService();
+class _SchedulerSmsHomePageState extends State<SchedulerSmsHomePage> {
+  final _smsService = SchedulerSmsService();
   final _recipientController = TextEditingController();
   final _messageController = TextEditingController();
   DateTime? _selectedDate;
@@ -158,7 +158,7 @@ class _SmsSchedulerHomePageState extends State<SmsSchedulerHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SMS Scheduler'),
+        title: const Text('SchedulerSMS'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Column(
