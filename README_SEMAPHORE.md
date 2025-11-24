@@ -285,10 +285,94 @@ bool isValid = isValidPhilippineNumber('09171234567');
 2. Verify API key in `semaphore_config.dart`
 3. Check Semaphore service status
 
+## Live API Testing
+
+The package includes dedicated testing utilities for verifying your Semaphore integration end-to-end.
+
+### Running the Live Test Script
+
+A ready-to-use test script is provided at `example/semaphore_live_test.dart`:
+
+```bash
+# Check account balance only
+dart run example/semaphore_live_test.dart
+
+# Send a test SMS to verify delivery
+dart run example/semaphore_live_test.dart 09171234567
+```
+
+**What it does:**
+- Connects to the Semaphore API with your API key
+- Displays your account information and credit balance
+- Optionally sends a test SMS to verify end-to-end functionality
+
+**API Key Configuration:**
+- By default, uses the test API key `1fd72138299086e8fc5656a9826ac7e9`
+- Override with environment variable: `SEMAPHORE_API_KEY=your-key dart run example/semaphore_live_test.dart`
+
+**⚠️ WARNING**: This will call the real Semaphore API and consume credits when sending SMS.
+
+### Using Testing Utilities in Your Code
+
+For programmatic testing, use the `SemaphoreTestHelper` class:
+
+```dart
+import 'package:schedulersms/schedulersms.dart';
+
+// Initialize with your API key
+final helper = SemaphoreTestHelper(
+  apiKey: 'your-api-key-here', // Replace with your actual key
+);
+await helper.initialize();
+
+// Check account balance
+final balance = await helper.getAccountBalance();
+print('Balance: $balance credits');
+
+// Get full account info
+final account = await helper.getAccountInfo();
+print('Account: ${account.accountName}');
+print('Status: ${account.status}');
+
+// Send a test SMS immediately
+final result = await helper.sendTestSms(
+  phoneNumber: '09171234567',
+  message: 'Test message from SchedulerSMS',
+);
+print('SMS sent! ID: ${result.messageId}, Status: ${result.status}');
+
+// Don't forget to dispose when done
+helper.dispose();
+```
+
+**Security Note**: The testing utilities are designed for development and verification only. Never commit API keys to public repositories. Use environment variables or secure storage for production applications.
+
+### FlutterFlow Testing
+
+To test from FlutterFlow, create a custom action:
+
+```dart
+import 'package:schedulersms/schedulersms.dart';
+
+Future<String> testSemaphoreConnection(String apiKey) async {
+  final helper = SemaphoreTestHelper(apiKey: apiKey);
+  
+  try {
+    await helper.initialize();
+    final balance = await helper.getAccountBalance();
+    helper.dispose();
+    return 'Connected! Balance: $balance credits';
+  } catch (e) {
+    return 'Error: $e';
+  }
+}
+```
+
 ## Documentation
 
 - [FlutterFlow Semaphore Guide](doc/FLUTTERFLOW_SEMAPHORE_GUIDE.md) - Complete integration guide
 - [Example Custom Actions](example/flutterflow_custom_actions.dart) - Ready-to-use code
+- [Live Test Script](example/semaphore_live_test.dart) - API verification tool
 - [Error Analysis Guide](doc/ERROR_ANALYSIS.md) - Debugging help
 - [Semaphore API Docs](https://www.semaphore.co/docs) - Official API documentation
 

@@ -254,6 +254,20 @@ This package is fully compatible with FlutterFlow. See the [example/flutterflow_
 3. Copy your API key from the API section
 4. Use this key when initializing the SMS scheduler
 
+## Live API Testing
+
+To verify your Semaphore integration works end-to-end:
+
+```bash
+# Check account balance
+dart run example/semaphore_live_test.dart
+
+# Send a test SMS
+dart run example/semaphore_live_test.dart 09171234567
+```
+
+See [README_SEMAPHORE.md](README_SEMAPHORE.md) for detailed testing documentation.
+
 ## Limitations
 
 -   **iOS**: Programmatic SMS sending is not possible. The native SMS composer will be opened.

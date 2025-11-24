@@ -27,3 +27,6 @@ export 'src/utils/schedulersms_diagnostics.dart';
 
 // Configuration
 export 'src/config/semaphore_config.dart';
+
+// Testing utilities (opt-in for live testing only)
+export 'src/testing/semaphore_test_helper.dart';
